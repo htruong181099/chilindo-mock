@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"chilindo/dto"
 	"chilindo/models"
 	"fmt"
 	"gorm.io/gorm"
@@ -9,11 +10,17 @@ import (
 
 type IUserRepository interface {
 	CreateUser(user *models.User) (*models.User, error)
-	GetUserByUsername(username string, password string) (*models.User, error)
+	GetUserByUsername(dto *dto.SignInDTO) (*models.User, error)
+	GetUserById(dto *dto.GetUserByIdDTO) (*models.User, error)
 }
 
 type UserRepository struct {
 	db *gorm.DB
+}
+
+func (u UserRepository) GetUserById(dto *dto.GetUserByIdDTO) (*models.User, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (u UserRepository) CreateUser(user *models.User) (*models.User, error) {
@@ -30,7 +37,9 @@ func (u UserRepository) CreateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
-func (u UserRepository) GetUserByUsername(username string, password string) (*models.User, error) {
+func (u UserRepository) GetUserByUsername(dto *dto.SignInDTO) (*models.User, error) {
+	username := dto.Username
+	password := dto.Password
 	var user *models.User
 	result := u.db.Where("username = ?", username).Find(&user)
 	if result.Error != nil {

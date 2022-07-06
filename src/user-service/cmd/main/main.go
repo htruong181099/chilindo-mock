@@ -23,6 +23,12 @@ func main() {
 	authRouter := routes.NewAuthRoute(authController, r)
 	authRouter.SetRouter()
 
+	addressRepo := repository.NewAddressRepository(database.Instance)
+	userService := services.NewUserService(userRepo, addressRepo)
+	userController := controllers.NewUserController(userService)
+	userRouter := routes.NewUserRoute(userController, r)
+	userRouter.SetRouter()
+
 	if err := r.Run(":3000"); err != nil {
 		log.Println("Open port is fail")
 		return

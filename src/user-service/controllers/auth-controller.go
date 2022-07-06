@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"chilindo/dto"
 	"chilindo/models"
 	"chilindo/services"
-	"chilindo/services/dto"
 	"chilindo/token"
 	"fmt"
 	"github.com/gin-gonic/gin"

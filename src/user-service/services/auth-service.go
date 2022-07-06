@@ -1,9 +1,9 @@
 package services
 
 import (
+	"chilindo/dto"
 	"chilindo/models"
 	"chilindo/repository"
-	"chilindo/services/dto"
 	"log"
 )
 
@@ -30,7 +30,7 @@ func (u AuthService) SignUp(user *models.User) (*models.User, error) {
 }
 
 func (u AuthService) SignIn(dto *dto.SignInDTO) (*models.User, error) {
-	user, err := u.UserRepository.GetUserByUsername(dto.Username, dto.Password)
+	user, err := u.UserRepository.GetUserByUsername(dto)
 	if err != nil {
 		log.Println("SignIn: Error GetUserByUsername in package service")
 		return nil, err
