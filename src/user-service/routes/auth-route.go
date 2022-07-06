@@ -9,19 +9,19 @@ type IAuthRoute interface {
 	SetRouter()
 }
 type AuthRoute struct {
-	UserController controllers.IUserController
+	AuthController controllers.IAuthController
 	Router         *gin.Engine
 }
 
 func (u AuthRoute) SetRouter() {
 	api := u.Router.Group("/api/auth")
 	{
-		api.POST("/signup", u.UserController.SignUp)
-		api.POST("/signin", u.UserController.SignIn)
+		api.POST("/signup", u.AuthController.SignUp)
+		api.POST("/signin", u.AuthController.SignIn)
 	}
 
 }
 
-func NewAuthRoute(userController controllers.IUserController, router *gin.Engine) *AuthRoute {
-	return &AuthRoute{UserController: userController, Router: router}
+func NewAuthRoute(authController controllers.IAuthController, router *gin.Engine) *AuthRoute {
+	return &AuthRoute{AuthController: authController, Router: router}
 }
