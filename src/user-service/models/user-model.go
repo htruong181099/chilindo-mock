@@ -17,7 +17,7 @@ type User struct {
 	PhoneNumber string `json:"phoneNumber"`
 	Gender      string `json:"gender"`
 	Language    string `json:"language"`
-	Role        string `json:"Role"`
+	Role        string `json:"Role" gorm:"default:user"`
 }
 
 func (u *User) HashPassword(password string) error {

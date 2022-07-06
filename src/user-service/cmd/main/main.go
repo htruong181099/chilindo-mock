@@ -18,9 +18,9 @@ func main() {
 	r := router()
 
 	userRepo := repository.NewUserRepository(database.Instance)
-	userService := services.NewUserService(userRepo)
-	userController := controllers.NewUserController(userService)
-	authRouter := routes.NewAuthRoute(userController, r)
+	authService := services.NewAuthService(userRepo)
+	authController := controllers.NewAuthController(authService)
+	authRouter := routes.NewAuthRoute(authController, r)
 	authRouter.SetRouter()
 
 	if err := r.Run(":3000"); err != nil {
