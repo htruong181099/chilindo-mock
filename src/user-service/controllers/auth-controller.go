@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"chilindo/dto"
-	"chilindo/models"
 	"chilindo/services"
 	"chilindo/token"
 	"fmt"
@@ -28,6 +27,7 @@ func (u AuthController) SignIn(c *gin.Context) {
 			"Message": "Error to sign in",
 		})
 		log.Println("SignIn: Error ShouldBindJSON in package controller", err)
+		c.Abort()
 		return
 	}
 	userLogin, errLogin := u.AuthService.SignIn(user)
@@ -36,6 +36,7 @@ func (u AuthController) SignIn(c *gin.Context) {
 			"Message": "Error SignIn",
 		})
 		log.Println("SignIn: Error in UserService.SignIn in package controller")
+		c.Abort()
 		return
 	}
 	tokenString, errToken := u.Token.GenerateJWT(userLogin.Username, userLogin.Email, userLogin.Id)
@@ -44,6 +45,7 @@ func (u AuthController) SignIn(c *gin.Context) {
 			"Message": "Error SignIn",
 		})
 		log.Println("SignIn: Error in GenerateJWT in package controller")
+		c.Abort()
 		return
 	}
 	c.JSONP(http.StatusOK, gin.H{
@@ -52,13 +54,14 @@ func (u AuthController) SignIn(c *gin.Context) {
 }
 
 func (u AuthController) SignUp(c *gin.Context) {
-	var userBody *models.User
+	var userBody *dto.SignUpDTO
 	fmt.Println(c.Request.Body)
-	if err := c.ShouldBindJSON(&userBody); err != nil {
+	if err := c.ShouldBindJSON(&userBody.User); err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
 		})
 		log.Println("SignUp: Error ShouldBindJSON in package controller", err.Error())
+		c.Abort()
 		return
 	}
 	user, err := u.AuthService.SignUp(userBody)

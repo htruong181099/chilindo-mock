@@ -2,6 +2,7 @@ package routes
 
 import (
 	"chilindo/controllers"
+	"chilindo/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,12 +12,17 @@ type IUserRoute interface {
 type UserRoute struct {
 	UserController controllers.IUserController
 	Router         *gin.Engine
+	MW             *utils.SMiddleWare
 }
 
 func (u UserRoute) SetRouter() {
-	api := u.Router.Group("/api/user")
+
+	api := u.Router.Group("/api/user").Use(u.MW.MiddleWare())
 	{
-		api.GET("/address/:addressId", u.UserController.GetAddress)
+		api.GET("/address", u.UserController.GetAddress)
+		api.GET("/address/:addressId", u.UserController.GetAddressById)
+		api.POST("/address/", u.UserController.CreateAddressByUserId)
+		//api.DELETE("/address/", u.UserController.)
 	}
 
 }

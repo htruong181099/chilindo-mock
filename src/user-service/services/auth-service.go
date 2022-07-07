@@ -8,7 +8,7 @@ import (
 )
 
 type IAuthService interface {
-	SignUp(user *models.User) (*models.User, error)
+	SignUp(dto *dto.SignUpDTO) (*models.User, error)
 	SignIn(dto *dto.SignInDTO) (*models.User, error)
 }
 
@@ -20,8 +20,8 @@ func NewAuthService(userRepository repository.IUserRepository) *AuthService {
 	return &AuthService{UserRepository: userRepository}
 }
 
-func (u AuthService) SignUp(user *models.User) (*models.User, error) {
-	userRegis, err := u.UserRepository.CreateUser(user)
+func (u AuthService) SignUp(dto *dto.SignUpDTO) (*models.User, error) {
+	userRegis, err := u.UserRepository.CreateUser(dto)
 	if err != nil {
 		log.Println("SignUp: Error CreateUser in package service")
 		return nil, err

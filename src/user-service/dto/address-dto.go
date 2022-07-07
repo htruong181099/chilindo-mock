@@ -4,6 +4,7 @@ import "chilindo/models"
 
 type CreateAddressDTO struct {
 	Address *models.Address
+	UserId  int
 }
 
 type GetAddressDTO struct {
@@ -12,10 +13,15 @@ type GetAddressDTO struct {
 
 type GetAddressByIdDTO struct {
 	AddressId int
+	UserId    int
 }
 
 type UpdateAddressDTO struct {
-	//data transfer object -> request body
+	Address *models.Address
+	UserId  int
+}
+
+type DeleteAddressByIdDTO struct {
 	AddressId int
 	UserId    int
 }
