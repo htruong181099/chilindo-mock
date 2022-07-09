@@ -17,3 +17,7 @@ type UpdateProductDTO struct {
 type ProductDTO struct {
 	productId string
 }
+
+func NewCreateProductDTO(product *models.Product) *CreateProductDTO {
+	return &CreateProductDTO{Product: product}
+}
