@@ -11,6 +11,12 @@ type SignInDTO struct {
 	Password string
 }
 
+//type SignUpDTO *models.User
+
 type SignUpDTO struct {
 	User *models.User
+}
+
+func NewSignUpDTO(user *models.User) *SignUpDTO {
+	return &SignUpDTO{User: user}
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/services"
 	"chilindo/src/user-service/token"
 	"fmt"
@@ -54,13 +55,14 @@ func (u AuthController) SignIn(c *gin.Context) {
 }
 
 func (u AuthController) SignUp(c *gin.Context) {
-	var userBody *dto.SignUpDTO
+	userBody := dto.NewSignUpDTO(&models.User{})
 	fmt.Println(c.Request.Body)
 	if err := c.ShouldBindJSON(&userBody.User); err != nil {
+		//userBody.User = userM
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
 		})
-		log.Println("SignUp: Error ShouldBindJSON in package controller", err.Error())
+		log.Println("SignUp: Error ShouldBindJSON in package controller", err)
 		c.Abort()
 		return
 	}

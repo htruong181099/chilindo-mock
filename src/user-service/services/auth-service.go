@@ -20,7 +20,7 @@ func NewAuthService(userRepository repository.IUserRepository) *AuthService {
 	return &AuthService{UserRepository: userRepository}
 }
 
-func (u AuthService) SignUp(dto *dto.SignUpDTO) (*models.User, error) {
+func (u *AuthService) SignUp(dto *dto.SignUpDTO) (*models.User, error) {
 	userRegis, err := u.UserRepository.CreateUser(dto)
 	if err != nil {
 		log.Println("SignUp: Error CreateUser in package service")
