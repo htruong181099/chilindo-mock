@@ -18,10 +18,14 @@ type UserRepository struct {
 }
 
 func (u UserRepository) CreateUser(dto *dto.SignUpDTO) (*models.User, error) {
-	record := u.db.Create(dto.User)
-	if record.Error != nil {
-		log.Println("CreateUser : Error in package repository")
-		return nil, record.Error
+	if err := dto.User.HashPassword(dto.User.Password); err != nil {
+		log.Println("CreateUser: Error in package repository")
+		return nil, err
+	}
+	result := u.db.Create(&dto.User)
+	if result.Error != nil {
+		log.Println("CreateUser: Error in package repository", result.Error)
+		return nil, result.Error
 	}
 	return dto.User, nil
 }
