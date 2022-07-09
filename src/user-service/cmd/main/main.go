@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	database.Connect("root:@Duy123456789@tcp(localhost:3306)/chilindo?parseTime=true")
 	database.Migrate()
 
