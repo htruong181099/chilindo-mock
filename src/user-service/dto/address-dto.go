@@ -1,6 +1,6 @@
 package dto
 
-import "chilindo/models"
+import "chilindo/src/user-service/models"
 
 type CreateAddressDTO struct {
 	Address *models.Address

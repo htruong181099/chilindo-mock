@@ -1,9 +1,9 @@
 package services
 
 import (
-	"chilindo/dto"
-	"chilindo/models"
-	"chilindo/repository"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
+	"chilindo/src/user-service/repository"
 	"log"
 )
 
@@ -54,7 +54,7 @@ func (u *UserService) GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, err
 	return address, nil
 }
 
-func (u *UserService) DeletedAddress(dto *dto.DeleteAddressByIdDTO) (*models.Address, error) {
+func (u *UserService) DeletedAddressById(dto *dto.DeleteAddressByIdDTO) (*models.Address, error) {
 	address, err := u.AddressRepository.DeleteAddressById(dto)
 	if err != nil {
 		log.Println("DeletedAddress: Error Delete Address in package service")

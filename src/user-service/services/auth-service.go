@@ -1,9 +1,9 @@
 package services
 
 import (
-	"chilindo/dto"
-	"chilindo/models"
-	"chilindo/repository"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
+	"chilindo/src/user-service/repository"
 	"log"
 )
 

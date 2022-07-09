@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"chilindo/dto"
-	"chilindo/models"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
 	"gorm.io/gorm"
 	"log"
 )

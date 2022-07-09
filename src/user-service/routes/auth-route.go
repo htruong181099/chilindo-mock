@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"chilindo/controllers"
+	"chilindo/src/user-service/controllers"
 	"github.com/gin-gonic/gin"
 )
 

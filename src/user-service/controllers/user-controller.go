@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"chilindo/config"
-	"chilindo/dto"
-	"chilindo/services"
-	"chilindo/token"
+	"chilindo/src/user-service/config"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/services"
+	"chilindo/src/user-service/token"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"chilindo/models"
+	"chilindo/src/user-service/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"

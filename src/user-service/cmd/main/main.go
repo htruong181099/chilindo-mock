@@ -1,11 +1,11 @@
 package main
 
 import (
-	"chilindo/controllers"
-	"chilindo/database"
-	"chilindo/repository"
-	"chilindo/routes"
-	"chilindo/services"
+	"chilindo/src/user-service/controllers"
+	"chilindo/src/user-service/database"
+	"chilindo/src/user-service/repository"
+	"chilindo/src/user-service/routes"
+	"chilindo/src/user-service/services"
 	"github.com/gin-gonic/gin"
 	"log"
 )

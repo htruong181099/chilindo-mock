@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"chilindo/config"
-	"chilindo/token"
+	"chilindo/src/user-service/config"
+	"chilindo/src/user-service/token"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
