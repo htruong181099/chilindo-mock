@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"chilindo/src/product-service/config"
 	"chilindo/src/product-service/dtos"
 	"chilindo/src/product-service/models"
 	"chilindo/src/product-service/services"
@@ -62,6 +63,7 @@ func (p ProductController) GetProducts(c *gin.Context) {
 func (p ProductController) GetProductById(c *gin.Context) {
 	var dto dtos.ProductDTO
 	dto.ProductId = c.Param(idProduct)
+	c.Set(config.ProductID, dto.ProductId)
 	product, err := p.ProductService.GetProductById(&dto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
