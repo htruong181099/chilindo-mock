@@ -11,7 +11,7 @@ type IProductService interface {
 	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) //Done
 	GetProducts() (*[]models.Product, error)                           //Done
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)      //Done
-	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error)
+	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) //Done
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
 }
 
@@ -52,11 +52,15 @@ func (p ProductService) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Produ
 		return nil, err
 	}
 	return product, nil
-}
+} //Done
 
 func (p ProductService) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error) {
-	//TODO implement me
-	panic("implement me")
+	product, err := p.ProductRepository.DeleteProduct(dto)
+	if err != nil {
+		log.Println("DeleteProduct: Error in package service", err)
+		return nil, err
+	}
+	return product, nil
 }
 
 func NewProductService(productRepository repository.IProductRepository) *ProductService {

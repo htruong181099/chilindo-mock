@@ -12,7 +12,7 @@ type IProductRepository interface {
 	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) //Done
 	GetProducts() (*[]models.Product, error)                           //Done
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)      //Done
-	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error)
+	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) //Done
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
 }
 
@@ -68,9 +68,14 @@ func (p ProductRepository) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Pr
 		return nil, recordSave.Error
 	}
 	return updateProduct, nil
-}
+} //Done
 
 func (p ProductRepository) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error) {
-	//TODO implement me
-	panic("implement me")
-}
+	var product *models.Product
+	recordFind := p.db.Where("id = ?", dto.ProductId).Delete(&product)
+	if recordFind.Error != nil {
+		log.Println("DeleteProduct: Error in find product to delete in package repository", recordFind.Error)
+		return nil, recordFind.Error
+	}
+	return product, nil
+} //Done

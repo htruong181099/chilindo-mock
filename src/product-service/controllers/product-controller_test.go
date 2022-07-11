@@ -141,4 +141,36 @@ func TestProductController_UpdateProduct(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Fatalf("Status epect is 200 but got %v", rr.Code)
 	}
-}
+} //Done
+
+func TestProductController_DeleteProduct(t *testing.T) {
+	ctr := gomock.NewController(t)
+	defer ctr.Finish()
+	svr := services.NewMockIProductService(ctr)
+	productCtr := NewProductController(svr)
+
+	//Mock service
+	svr.EXPECT().DeleteProduct(gomock.Any()).Return(&models.Product{
+		Model:       gorm.Model{},
+		Id:          "",
+		Name:        "",
+		Price:       "",
+		Description: "",
+		Quantity:    0,
+	}, nil)
+
+	req, err := http.NewRequest("DELETE", "api/products/:id", nil)
+	if err != nil {
+		t.Fatal("Error")
+	}
+	rr := httptest.NewRecorder()
+
+	c, _ := gin.CreateTestContext(rr)
+	c.Request = req
+	//testing
+	productCtr.DeleteProduct(c)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Status expect is 200 but got %v", rr.Code)
+	}
+
+} //Done

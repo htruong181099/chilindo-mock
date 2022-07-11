@@ -4,6 +4,7 @@ import (
 	"chilindo/src/product-service/dtos"
 	"chilindo/src/product-service/models"
 	"chilindo/src/product-service/services"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -97,12 +98,24 @@ func (p ProductController) UpdateProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, product)
 
-}
+} //Done
 
 func (p ProductController) DeleteProduct(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
+	var dto dtos.ProductDTO
+	fmt.Println(dto.ProductId)
+	dto.ProductId = c.Param(idProduct)
+	fmt.Println(dto.ProductId)
+	product, err := p.ProductService.DeleteProduct(&dto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to delete product",
+		})
+		log.Println("DeleteProduct: Error to get id product in package controller", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, product)
+} //Done
 
 func NewProductController(productService services.IProductService) *ProductController {
 	return &ProductController{ProductService: productService}

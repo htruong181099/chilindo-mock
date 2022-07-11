@@ -102,3 +102,27 @@ func TestProductService_UpdateProduct(t *testing.T) {
 	}
 
 } //Done
+
+func TestProductService_DeleteProduct(t *testing.T) {
+	ctr := gomock.NewController(t)
+	defer ctr.Finish()
+	repo := repository.NewMockIProductRepository(ctr)
+	productSvr := NewProductService(repo)
+
+	//Mock service
+	repo.EXPECT().DeleteProduct(gomock.Any()).Return(&models.Product{
+		Model:       gorm.Model{},
+		Id:          "",
+		Name:        "",
+		Price:       "",
+		Description: "",
+		Quantity:    0,
+	}, nil)
+
+	//testing
+	var dto *dtos.ProductDTO
+	_, err := productSvr.DeleteProduct(dto)
+	if err != nil {
+		t.Fatal("Error")
+	}
+} //Done
