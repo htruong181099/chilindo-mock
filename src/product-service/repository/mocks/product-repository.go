@@ -5,10 +5,11 @@
 package repository
 
 import (
-	"chilindo/src/product-service/dtos"
-	"chilindo/src/product-service/models"
-	"github.com/golang/mock/gomock"
-	"reflect"
+	dtos "chilindo/src/product-service/dtos"
+	models "chilindo/src/product-service/models"
+	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockIProductRepository is a mock of IProductRepository interface.
@@ -80,18 +81,18 @@ func (mr *MockIProductRepositoryMockRecorder) GetProductById(dto interface{}) *g
 }
 
 // GetProducts mocks base method.
-func (m *MockIProductRepository) GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error) {
+func (m *MockIProductRepository) GetProducts() (*[]models.Product, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProducts", dto)
+	ret := m.ctrl.Call(m, "GetProducts")
 	ret0, _ := ret[0].(*[]models.Product)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetProducts indicates an expected call of GetProducts.
-func (mr *MockIProductRepositoryMockRecorder) GetProducts(dto interface{}) *gomock.Call {
+func (mr *MockIProductRepositoryMockRecorder) GetProducts() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProducts", reflect.TypeOf((*MockIProductRepository)(nil).GetProducts), dto)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProducts", reflect.TypeOf((*MockIProductRepository)(nil).GetProducts))
 }
 
 // UpdateProduct mocks base method.

@@ -10,7 +10,7 @@ import (
 
 type IProductRepository interface {
 	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error)
-	GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error)
+	GetProducts() (*[]models.Product, error)
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error)
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
@@ -34,13 +34,19 @@ func (p ProductRepository) CreateProduct(dto *dtos.CreateProductDTO) (*models.Pr
 	return dto.Product, nil
 } // Done
 
-func (p ProductRepository) GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error) {
-	panic("implement me")
-}
-
 func (p ProductRepository) GetProductById(dto *dtos.ProductDTO) (*models.Product, error) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (p ProductRepository) GetProducts() (*[]models.Product, error) {
+	var products *[]models.Product
+	record := p.db.Find(&products)
+	if record.Error != nil {
+		log.Println("GetProducts: Error get all in package", record.Error)
+		return nil, record.Error
+	}
+	return products, nil
 }
 
 func (p ProductRepository) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) {

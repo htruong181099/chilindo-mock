@@ -81,18 +81,18 @@ func (mr *MockIProductServiceMockRecorder) GetProductById(dto interface{}) *gomo
 }
 
 // GetProducts mocks base method.
-func (m *MockIProductService) GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error) {
+func (m *MockIProductService) GetProducts() (*[]models.Product, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProducts", dto)
+	ret := m.ctrl.Call(m, "GetProducts")
 	ret0, _ := ret[0].(*[]models.Product)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetProducts indicates an expected call of GetProducts.
-func (mr *MockIProductServiceMockRecorder) GetProducts(dto interface{}) *gomock.Call {
+func (mr *MockIProductServiceMockRecorder) GetProducts() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProducts", reflect.TypeOf((*MockIProductService)(nil).GetProducts), dto)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProducts", reflect.TypeOf((*MockIProductService)(nil).GetProducts))
 }
 
 // UpdateProduct mocks base method.

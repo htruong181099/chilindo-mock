@@ -21,26 +21,6 @@ type ProductController struct {
 	ProductService services.IProductService
 }
 
-func (p ProductController) GetProducts(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p ProductController) GetProductById(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p ProductController) UpdateProduct(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p ProductController) DeleteProduct(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (p ProductController) CreateProduct(c *gin.Context) {
 	var productBody *models.Product
 	if err := c.ShouldBindJSON(&productBody); err != nil {
@@ -63,6 +43,33 @@ func (p ProductController) CreateProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, product)
 } //done
+
+func (p ProductController) GetProducts(c *gin.Context) {
+	products, err := p.ProductService.GetProducts()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to get all products",
+		})
+		log.Println("GetProducts: Error get all product in package controller", err)
+		c.Abort()
+	}
+	c.JSON(http.StatusOK, products)
+}
+
+func (p ProductController) GetProductById(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (p ProductController) UpdateProduct(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (p ProductController) DeleteProduct(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
 
 func NewProductController(productService services.IProductService) *ProductController {
 	return &ProductController{ProductService: productService}

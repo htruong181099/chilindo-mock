@@ -6,17 +6,13 @@ type CreateProductDTO struct {
 	Product *models.Product
 }
 
-type GetProductsDTO struct {
-	Id int
-}
-
 type UpdateProductDTO struct {
-	productId string
+	ProductId string
 	Product   *models.Product
 }
 
 type ProductDTO struct {
-	productId string
+	ProductId string
 }
 
 func NewCreateProductDTO(product *models.Product) *CreateProductDTO {

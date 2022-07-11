@@ -2,6 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
+// Make repository
 type Image struct {
 	gorm.Model
 	Id        int     `json:"id" gorm:"primaryKey"`

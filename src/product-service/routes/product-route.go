@@ -15,9 +15,10 @@ type ProductRoute struct {
 }
 
 func (p ProductRoute) SetRouter() {
-	api := p.Router.Group("/admin")
+	api := p.Router.Group("/api/products")
 	{
-		api.POST("/product", p.ProductController.CreateProduct)
+		api.POST("/", p.ProductController.CreateProduct)
+		api.GET("/", p.ProductController.GetProducts)
 	}
 }
 

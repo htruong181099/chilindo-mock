@@ -9,7 +9,7 @@ import (
 
 type IProductService interface {
 	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error)
-	GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error)
+	GetProducts() (*[]models.Product, error)
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error)
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
@@ -26,11 +26,14 @@ func (p ProductService) CreateProduct(dto *dtos.CreateProductDTO) (*models.Produ
 		return nil, err
 	}
 	return createProduct, nil
-}
+} //Done
 
-func (p ProductService) GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error) {
-	//TODO implement me
-	panic("implement me")
+func (p ProductService) GetProducts() (*[]models.Product, error) {
+	products, err := p.ProductRepository.GetProducts()
+	if err != nil {
+		log.Println("GetProducts : Error get products in package service", err)
+	}
+	return products, nil
 }
 
 func (p ProductService) GetProductById(dto *dtos.ProductDTO) (*models.Product, error) {
