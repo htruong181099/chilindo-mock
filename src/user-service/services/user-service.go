@@ -8,6 +8,8 @@ import (
 )
 
 type IUserService interface {
+	GetUserById(dto *dto.GetByUserIdDTO) (*models.User, error)
+	UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User, error)
 	GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, error)
 	GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error)
 	CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error)
@@ -17,6 +19,24 @@ type IUserService interface {
 type UserService struct {
 	UserRepository    repository.IUserRepository
 	AddressRepository repository.IAddressRepository
+}
+
+func (u *UserService) UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User, error) {
+	user, repoErr := u.UserRepository.UpdatePassword(dto)
+	if repoErr != nil {
+		log.Println("ChangePassword: error in package service", repoErr)
+		return nil, repoErr
+	}
+	return user, nil
+}
+
+func (u *UserService) GetUserById(dto *dto.GetByUserIdDTO) (*models.User, error) {
+	user, repoErr := u.UserRepository.GetUserById(dto)
+	if repoErr != nil {
+		log.Println("GetUserById: Error Get User in package Service", repoErr)
+		return nil, repoErr
+	}
+	return user, nil
 }
 
 func (u *UserService) CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error) {
@@ -29,14 +49,6 @@ func (u *UserService) CreateAddress(dto *dto.CreateAddressDTO) (*models.Address,
 }
 
 func (u *UserService) GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error) {
-	//TODO implement me
-	//find user
-	//userId := dto.userId
-	//user, error := u.UserRepository.GetUserByID(userId)
-	//if error != nil {
-	//
-	//}
-	//address, err := u.AddressRepository.GetAddressById(dto)
 	address, err := u.AddressRepository.GetAddressById(dto)
 	if err != nil {
 		log.Println("GetAddressById: Error in get address by id in package uer-service", err)

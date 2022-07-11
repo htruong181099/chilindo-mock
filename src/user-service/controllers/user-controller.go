@@ -11,9 +11,13 @@ import (
 	"strconv"
 )
 
-const addressId = "addressId"
+const (
+	addressId = "addressId"
+)
 
 type IUserController interface {
+	GetUser(c *gin.Context)
+	ChangePassword(c *gin.Context)
 	GetAddress(c *gin.Context)
 	GetAddressById(c *gin.Context)
 	CreateAddressByUserId(c *gin.Context)
@@ -23,6 +27,56 @@ type IUserController interface {
 type UserController struct {
 	UserService services.IUserService
 	Token       *token.JWTClaim
+}
+
+func (u *UserController) ChangePassword(c *gin.Context) {
+	var dTo *dto.UpdatePasswordDTO
+	userId, ok := c.Get(config.UserID)
+	if !ok {
+		c.JSONP(http.StatusUnauthorized, gin.H{
+			"Message": "Unauthorized",
+		})
+		log.Println("ChangePassword: Error Get UserID in package controller")
+		c.Abort()
+		return
+	}
+	dTo.UserId = userId.(int)
+	_, err := u.UserService.UpdatePassword(dTo)
+	if err != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{
+			"Message": "Error update password",
+		})
+		log.Println("ChangePassword: Error ChangePassword in package controller", err)
+		return
+	}
+	c.JSONP(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func (u *UserController) GetUser(c *gin.Context) {
+	var dTo *dto.GetByUserIdDTO
+	userId, ok := c.Get(config.UserID)
+	if !ok {
+		c.JSONP(http.StatusUnauthorized, gin.H{
+			"Message": "Unauthorized",
+		})
+		log.Println("CreateAddressByUserId: Error Get UserID in package controller")
+		c.Abort()
+		return
+	}
+
+	dTo.UserId = userId.(int)
+	user, err := u.UserService.GetUserById(dTo)
+	if err != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{
+			"Message": "Error get user",
+		})
+		log.Println("GetUser: Error get user in package controller", err)
+		return
+	}
+	user.Password = ""
+	c.JSONP(http.StatusOK, user)
 }
 
 func (u *UserController) CreateAddressByUserId(c *gin.Context) {
