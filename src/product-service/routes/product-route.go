@@ -19,6 +19,8 @@ func (p ProductRoute) SetRouter() {
 	{
 		api.POST("/", p.ProductController.CreateProduct)
 		api.GET("/", p.ProductController.GetProducts)
+		api.GET("/:id", p.ProductController.GetProductById)
+		api.POST("/:id", p.ProductController.UpdateProduct)
 	}
 }
 

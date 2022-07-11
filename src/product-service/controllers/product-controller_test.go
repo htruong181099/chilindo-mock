@@ -76,4 +76,69 @@ func TestProductController_GetProducts(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Fatalf("Status epect is 201 code but got %v", rr.Code)
 	}
+} //Done
+
+func TestProductController_GetProductById(t *testing.T) {
+	ctr := gomock.NewController(t)
+	defer ctr.Finish()
+	srv := services.NewMockIProductService(ctr)
+	productCtr := NewProductController(srv)
+
+	//Mock service
+	srv.EXPECT().GetProductById(gomock.Any()).Return(&models.Product{
+		Model:       gorm.Model{},
+		Id:          "",
+		Name:        "",
+		Price:       "",
+		Description: "",
+		Quantity:    0,
+	}, nil).Times(1)
+
+	req, err := http.NewRequest("GET", "/api/products:id", nil)
+	if err != nil {
+		t.Fatal("Error")
+	}
+	rr := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rr)
+	c.Request = req
+
+	productCtr.GetProductById(c)
+	//testing
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Status expect is 200 but got %v", rr.Code)
+	}
+
+} //Done
+
+func TestProductController_UpdateProduct(t *testing.T) {
+	ctr := gomock.NewController(t)
+	defer ctr.Finish()
+	svr := services.NewMockIProductService(ctr)
+	productCtr := NewProductController(svr)
+
+	//Mock service
+	svr.EXPECT().UpdateProduct(gomock.Any()).Return(&models.Product{
+		Model:       gorm.Model{},
+		Id:          "",
+		Name:        "",
+		Price:       "",
+		Description: "",
+		Quantity:    0,
+	}, nil).Times(1)
+	//Create mock body
+	body := []byte("{}")
+	//Create request
+	req, err := http.NewRequest("POST", "api/products/:id", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal("Error")
+	}
+	rr := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rr)
+	c.Request = req
+
+	//testing
+	productCtr.UpdateProduct(c)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Status epect is 200 but got %v", rr.Code)
+	}
 }

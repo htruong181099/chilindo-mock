@@ -7,18 +7,26 @@ import (
 	"chilindo/src/product-service/routes"
 	"chilindo/src/product-service/services"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"log"
+	"os"
 )
 
-//git checkout -b features/product
-//git pull origin features/product ->
-//git add ./src/product-service
-//git commit -m ""
-//git push origin features/product
+const (
+	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
+)
 
 func main() {
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
-	database.Connect("root:@Duy123456789@tcp(localhost:3306)/chilindo?parseTime=true")
+	connectString := "root:@Duy123456789@tcp(localhost:3306)/chilindo?parseTime=true"
+	if envErr == nil {
+		connectString = os.Getenv(DB_CONNECTION_STRING)
+	}
+	database.Connect(connectString)
 	database.Migrate()
 
 	r := router()

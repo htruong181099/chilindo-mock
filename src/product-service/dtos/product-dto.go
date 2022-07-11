@@ -18,3 +18,7 @@ type ProductDTO struct {
 func NewCreateProductDTO(product *models.Product) *CreateProductDTO {
 	return &CreateProductDTO{Product: product}
 }
+
+func NewUpdateProductDTO(product *models.Product) *UpdateProductDTO {
+	return &UpdateProductDTO{Product: product}
+}

@@ -10,12 +10,14 @@ import (
 )
 
 type IProductController interface {
-	CreateProduct(c *gin.Context)
-	GetProducts(c *gin.Context)
-	GetProductById(c *gin.Context)
-	UpdateProduct(c *gin.Context)
+	CreateProduct(c *gin.Context)  //Done
+	GetProducts(c *gin.Context)    //Done
+	GetProductById(c *gin.Context) //Done
+	UpdateProduct(c *gin.Context)  //Done
 	DeleteProduct(c *gin.Context)
 }
+
+const idProduct = "id"
 
 type ProductController struct {
 	ProductService services.IProductService
@@ -54,16 +56,47 @@ func (p ProductController) GetProducts(c *gin.Context) {
 		c.Abort()
 	}
 	c.JSON(http.StatusOK, products)
-}
+} //Done
 
 func (p ProductController) GetProductById(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
+	var dto dtos.ProductDTO
+	dto.ProductId = c.Param(idProduct)
+	product, err := p.ProductService.GetProductById(&dto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to get Product ",
+		})
+		log.Println("GetProductById: Error in package controller", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, product)
+} //Done
 
 func (p ProductController) UpdateProduct(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	productId := c.Param(idProduct)
+	var productUpdateBody *models.Product
+	if err := c.ShouldBindJSON(&productUpdateBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to update product",
+		})
+		log.Println("UpdateProduct: Error ShouldBindJSON in package controller", err)
+		c.Abort()
+		return
+	}
+	dtoUpdate := dtos.NewUpdateProductDTO(productUpdateBody)
+	dtoUpdate.ProductId = productId
+	product, err := p.ProductService.UpdateProduct(dtoUpdate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to update product",
+		})
+		log.Println("UpdateProduct: Error Update in package controller", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, product)
+
 }
 
 func (p ProductController) DeleteProduct(c *gin.Context) {

@@ -8,9 +8,9 @@ import (
 )
 
 type IProductService interface {
-	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error)
-	GetProducts() (*[]models.Product, error)
-	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)
+	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) //Done
+	GetProducts() (*[]models.Product, error)                           //Done
+	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)      //Done
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error)
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
 }
@@ -34,16 +34,24 @@ func (p ProductService) GetProducts() (*[]models.Product, error) {
 		log.Println("GetProducts : Error get products in package service", err)
 	}
 	return products, nil
-}
+} //Done
 
 func (p ProductService) GetProductById(dto *dtos.ProductDTO) (*models.Product, error) {
-	//TODO implement me
-	panic("implement me")
-}
+	product, err := p.ProductRepository.GetProductById(dto)
+	if err != nil {
+		log.Println("GetProductById: Error in get product by Id", err)
+		return nil, err
+	}
+	return product, nil
+} //Done
 
 func (p ProductService) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) {
-	//TODO implement me
-	panic("implement me")
+	product, err := p.ProductRepository.UpdateProduct(dto)
+	if err != nil {
+		log.Println("UpdateProduct: Error in package service", err)
+		return nil, err
+	}
+	return product, nil
 }
 
 func (p ProductService) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error) {
