@@ -39,12 +39,12 @@ func (j *JWTClaim) ExtractToken(tokenString string) *JWTClaim {
 		return []byte(jwtKey), nil
 	})
 	if err != nil {
-		log.Println("ExtractToken: Error ParseWithClaims in midlleWare")
+		log.Println("ExtractToken: Error ParseWithClaims in middleWare")
 		return nil
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
-		log.Println("ExtractToken: Error ParseWithClaims in midlleWare")
+		log.Println("ExtractToken: Error ParseWithClaims in middleWare")
 		return nil
 	}
 

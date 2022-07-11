@@ -17,8 +17,10 @@ type UserRoute struct {
 
 func (u UserRoute) SetRouter() {
 
-	api := u.Router.Group("/api/user").Use(u.MW.MiddleWare())
+	api := u.Router.Group("/api/users").Use(u.MW.MiddleWare())
 	{
+		api.GET("/", u.UserController.GetUser)
+		api.PATCH("/password", u.UserController.ChangePassword)
 		api.GET("/address", u.UserController.GetAddress)
 		api.GET("/address/:addressId", u.UserController.GetAddressById)
 		api.POST("/address/", u.UserController.CreateAddressByUserId)
