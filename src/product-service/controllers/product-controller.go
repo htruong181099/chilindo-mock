@@ -61,8 +61,8 @@ func (p ProductController) CreateProduct(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, product)
-}
+	c.JSON(http.StatusCreated, product)
+} //done
 
 func NewProductController(productService services.IProductService) *ProductController {
 	return &ProductController{ProductService: productService}

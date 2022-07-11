@@ -32,10 +32,9 @@ func (p ProductRepository) CreateProduct(dto *dtos.CreateProductDTO) (*models.Pr
 		return nil, record.Error
 	}
 	return dto.Product, nil
-}
+} // Done
 
 func (p ProductRepository) GetProducts(dto *dtos.GetProductsDTO) (*[]models.Product, error) {
-	//TODO implement me
 	panic("implement me")
 }
 

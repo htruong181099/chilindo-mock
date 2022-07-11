@@ -7,6 +7,7 @@ type CreateProductDTO struct {
 }
 
 type GetProductsDTO struct {
+	Id int
 }
 
 type UpdateProductDTO struct {
