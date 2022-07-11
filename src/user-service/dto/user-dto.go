@@ -3,7 +3,7 @@ package dto
 import "chilindo/src/user-service/models"
 
 type GetByUserIdDTO struct {
-	UserId int `json:"userId"`
+	UserId int //`json:"userId"`
 }
 
 type UpdatePasswordDTO struct {

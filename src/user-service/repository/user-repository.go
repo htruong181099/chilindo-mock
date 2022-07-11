@@ -39,7 +39,7 @@ func (u UserRepository) UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User
 
 func (u UserRepository) GetUserById(dto *dto.GetByUserIdDTO) (*models.User, error) {
 	var user *models.User
-	result := u.db.Where("user_id = ?", dto.UserId).Find(&user)
+	result := u.db.Where("id = ?", dto.UserId).Find(&user)
 	if result.Error != nil {
 		log.Println("GetUserById: Error in package repository", result.Error)
 		return nil, result.Error

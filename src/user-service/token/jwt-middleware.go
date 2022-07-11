@@ -10,7 +10,7 @@ var jwtKey = []byte("supersecretkey")
 
 type IJwtMiddleware interface {
 	GenerateJWT(email string, username string, id int) (tokenString string, err error)
-	ExtractToken(tokenString string) *JWTClaim
+	ExtractToken(tokenString string) (*JWTClaim, error) // Lỗi vì không có giá trị bên trong struct
 }
 type JWTClaim struct {
 	Username string
@@ -34,19 +34,43 @@ func (j *JWTClaim) GenerateJWT(email string, username string, id int) (tokenStri
 	return
 }
 
-func (j *JWTClaim) ExtractToken(tokenString string) *JWTClaim {
-	token, err := jwt.ParseWithClaims(tokenString, &JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(jwtKey), nil
-	})
+//func (j *JWTClaim) ValidateToken(signedToken string) (*JWTClaim, error) {
+//	token, err := jwt.ParseWithClaims(
+//		signedToken,
+//		&JWTClaim{},
+//		func(token *jwt.Token) (interface{}, error) {
+//			return []byte(jwtKey), nil
+//		},
+//	)
+//	if err != nil {
+//		log.Println("ValidateToken: Error")
+//		return nil, err
+//	}
+//	claims, ok := token.Claims.(*JWTClaim)
+//	if !ok {
+//		err = errors.New("couldn't parse claims")
+//		return nil, err
+//	}
+//
+//	return claims, nil
+//}
+
+func ExtractToken(signedToken string) *JWTClaim {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&JWTClaim{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(jwtKey), nil
+		},
+	)
 	if err != nil {
-		log.Println("ExtractToken: Error ParseWithClaims in middleWare")
+		log.Println("ExtractToken : Error in jwt")
 		return nil
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
-		log.Println("ExtractToken: Error ParseWithClaims in middleWare")
+		log.Println("ExtractToken : Error in jwt")
 		return nil
 	}
-
 	return claims
 }
