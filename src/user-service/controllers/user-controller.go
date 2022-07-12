@@ -77,7 +77,15 @@ func (u *UserController) GetUser(c *gin.Context) {
 		return
 	}
 	user.Password = ""
-	c.JSONP(http.StatusOK, user)
+	c.JSONP(http.StatusOK, gin.H{
+		"id":          user.Id,
+		"firstName":   user.FirstName,
+		"lastName":    user.LastName,
+		"username":    user.Username,
+		"email":       user.Email,
+		"phoneNumber": user.PhoneNumber,
+		"gender":      user.Gender,
+	})
 }
 
 func (u *UserController) CreateAddressByUserId(c *gin.Context) {
