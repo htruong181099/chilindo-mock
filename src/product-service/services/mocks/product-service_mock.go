@@ -35,6 +35,21 @@ func (m *MockIProductService) EXPECT() *MockIProductServiceMockRecorder {
 	return m.recorder
 }
 
+// CreateOption mocks base method.
+func (m *MockIProductService) CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOption", dto)
+	ret0, _ := ret[0].(*models.Option)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateOption indicates an expected call of CreateOption.
+func (mr *MockIProductServiceMockRecorder) CreateOption(dto interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOption", reflect.TypeOf((*MockIProductService)(nil).CreateOption), dto)
+}
+
 // CreateProduct mocks base method.
 func (m *MockIProductService) CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) {
 	m.ctrl.T.Helper()
@@ -50,6 +65,21 @@ func (mr *MockIProductServiceMockRecorder) CreateProduct(dto interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateProduct", reflect.TypeOf((*MockIProductService)(nil).CreateProduct), dto)
 }
 
+// DeleteOption mocks base method.
+func (m *MockIProductService) DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOption", dto)
+	ret0, _ := ret[0].(*models.Option)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOption indicates an expected call of DeleteOption.
+func (mr *MockIProductServiceMockRecorder) DeleteOption(dto interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOption", reflect.TypeOf((*MockIProductService)(nil).DeleteOption), dto)
+}
+
 // DeleteProduct mocks base method.
 func (m *MockIProductService) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error) {
 	m.ctrl.T.Helper()
@@ -63,6 +93,36 @@ func (m *MockIProductService) DeleteProduct(dto *dtos.ProductDTO) (*models.Produ
 func (mr *MockIProductServiceMockRecorder) DeleteProduct(dto interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProduct", reflect.TypeOf((*MockIProductService)(nil).DeleteProduct), dto)
+}
+
+// GetOptionById mocks base method.
+func (m *MockIProductService) GetOptionById(dto *dtos.OptionIdDTO) (*models.Option, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOptionById", dto)
+	ret0, _ := ret[0].(*models.Option)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOptionById indicates an expected call of GetOptionById.
+func (mr *MockIProductServiceMockRecorder) GetOptionById(dto interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOptionById", reflect.TypeOf((*MockIProductService)(nil).GetOptionById), dto)
+}
+
+// GetOptions mocks base method.
+func (m *MockIProductService) GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOptions", dto)
+	ret0, _ := ret[0].(*[]models.Option)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOptions indicates an expected call of GetOptions.
+func (mr *MockIProductServiceMockRecorder) GetOptions(dto interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOptions", reflect.TypeOf((*MockIProductService)(nil).GetOptions), dto)
 }
 
 // GetProductById mocks base method.
@@ -93,6 +153,21 @@ func (m *MockIProductService) GetProducts() (*[]models.Product, error) {
 func (mr *MockIProductServiceMockRecorder) GetProducts() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProducts", reflect.TypeOf((*MockIProductService)(nil).GetProducts))
+}
+
+// UpdateOption mocks base method.
+func (m *MockIProductService) UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateOption", dto)
+	ret0, _ := ret[0].(*models.Option)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateOption indicates an expected call of UpdateOption.
+func (mr *MockIProductServiceMockRecorder) UpdateOption(dto interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOption", reflect.TypeOf((*MockIProductService)(nil).UpdateOption), dto)
 }
 
 // UpdateProduct mocks base method.

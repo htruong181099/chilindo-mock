@@ -15,7 +15,7 @@ type IProductRepository interface {
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) //Done
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)       //Done
 	CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error)    //Done
-	GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error)
+	GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error)       //Done
 	GetOptionById(dto *dtos.OptionIdDTO) (*models.Option, error)
 	UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option, error)
 	DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error)
@@ -96,9 +96,21 @@ func (p ProductRepository) UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Opti
 } //Done
 
 func (p ProductRepository) DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error) {
-	//TODO implement me
-	panic("implement me")
+	var option *models.Option
+	record := p.db.Where("id = ?", dto.OptionId).Find(&option)
+	if record.Error != nil {
+		log.Println("DeleteOption: Error to find option", record.Error)
+		return nil, record.Error
+	}
+	recordDelete := p.db.Delete(&option)
+	if recordDelete.Error != nil {
+		log.Println("DeleteOption: Error to delete option", record.Error)
+		return nil, recordDelete.Error
+	}
+	return option, nil
 }
+
+//Product repository
 
 func (p ProductRepository) CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) {
 	fmt.Println(dto.Product)

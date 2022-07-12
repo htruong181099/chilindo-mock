@@ -75,9 +75,13 @@ func (p ProductService) UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option,
 }
 
 func (p ProductService) DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error) {
-	//TODO implement me
-	panic("implement me")
-}
+	option, err := p.ProductRepository.DeleteOption(dto)
+	if err != nil {
+		log.Println("DeleteOption: Error delete option", err)
+		return nil, err
+	}
+	return option, nil
+} //Done
 
 //Product Repository
 

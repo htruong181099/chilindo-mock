@@ -19,8 +19,8 @@ type IProductController interface {
 	UpdateProduct(c *gin.Context)  //Done
 	DeleteProduct(c *gin.Context)  //Done
 	CreateOption(c *gin.Context)   //Done
-	GetOptions(c *gin.Context)
-	GetOptionById(c *gin.Context)
+	GetOptions(c *gin.Context)     //Done
+	GetOptionById(c *gin.Context)  //Done
 	UpdateOption(c *gin.Context)
 	DeleteOption(c *gin.Context)
 }
@@ -156,12 +156,33 @@ func (p ProductController) UpdateOption(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, option)
-}
+} //Done
 
 func (p ProductController) DeleteOption(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
+	oId, errGetOId := strconv.Atoi(c.Param(optionId))
+	if errGetOId != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to delete option",
+		})
+		log.Println("DeleteOption: Error to parse oId", errGetOId)
+		c.Abort()
+		return
+	}
+	var dto dtos.OptionIdDTO
+	dto.OptionId = oId
+	option, err := p.ProductService.DeleteOption(&dto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to delete option",
+		})
+		log.Println("DeleteOption: Error to parse oId", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, option)
+} //Done
+
+//Product Controller
 
 func (p ProductController) CreateProduct(c *gin.Context) {
 	var productBody *models.Product

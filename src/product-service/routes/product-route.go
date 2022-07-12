@@ -31,6 +31,7 @@ func (p ProductRoute) SetRouter() {
 	{
 		optionAPI.GET("/:optionId", p.ProductController.GetOptionById)
 		optionAPI.PATCH("/:optionId", p.ProductController.UpdateOption)
+		optionAPI.DELETE("/:optionId", p.ProductController.DeleteOption)
 	}
 }
 
