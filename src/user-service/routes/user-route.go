@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"chilindo/pkg/middlewares"
 	"chilindo/src/user-service/controllers"
-	"chilindo/src/user-service/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,12 +12,12 @@ type IUserRoute interface {
 type UserRoute struct {
 	UserController controllers.IUserController
 	Router         *gin.Engine
-	MW             *utils.SMiddleWare
+	JWTMiddleware  *middlewares.JwtMiddleWare
 }
 
 func (u UserRoute) SetRouter() {
 
-	api := u.Router.Group("/api/users").Use(u.MW.MiddleWare())
+	api := u.Router.Group("/api/users").Use(u.JWTMiddleware.IsAuth())
 	{
 		api.GET("/", u.UserController.GetUser)
 		api.PATCH("/password", u.UserController.ChangePassword)

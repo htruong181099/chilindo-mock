@@ -55,7 +55,7 @@ func (j *JWTClaim) GenerateJWT(email string, username string, id int) (tokenStri
 //	return claims, nil
 //}
 
-func ExtractToken(signedToken string) *JWTClaim {
+func ExtractToken(signedToken string) (*JWTClaim, error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
@@ -64,13 +64,13 @@ func ExtractToken(signedToken string) *JWTClaim {
 		},
 	)
 	if err != nil {
-		log.Println("ExtractToken : Error in jwt")
-		return nil
+		log.Println("ExtractToken : Error in jwt to parse")
+		return nil, err
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
 		log.Println("ExtractToken : Error in jwt")
-		return nil
+		return nil, err
 	}
-	return claims
+	return claims, nil
 }
