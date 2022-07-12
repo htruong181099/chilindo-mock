@@ -2,21 +2,31 @@ package dtos
 
 import "chilindo/src/product-service/models"
 
-type CreateOption struct {
+type CreateOptionDTO struct {
 	Option *models.Option
 }
 
-func NewCreateOption(option *models.Option) *CreateOption {
-	return &CreateOption{Option: option}
+func NewCreateOption(option *models.Option) *CreateOptionDTO {
+	return &CreateOptionDTO{Option: option}
 }
 
-type OptionById struct {
+type OptionIdDTO struct {
+	OptionId int
+}
+
+type OptionByIdDTO struct {
 	OptionId  int
 	ProductId string
 }
 
-type UpdateOptionBy struct {
-	Option    *models.Option
-	OptionId  int
+type UpdateOptionDTO struct {
+	Option *models.Option
+}
+
+func NewUpdateOptionDTO(option *models.Option) *UpdateOptionDTO {
+	return &UpdateOptionDTO{Option: option}
+}
+
+type ProductIdDTO struct {
 	ProductId string
 }

@@ -4,20 +4,82 @@ import (
 	"chilindo/src/product-service/dtos"
 	"chilindo/src/product-service/models"
 	"chilindo/src/product-service/repository"
+	"errors"
 	"log"
 )
 
 type IProductService interface {
+	//product
 	CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) //Done
 	GetProducts() (*[]models.Product, error)                           //Done
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)      //Done
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) //Done
-	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)
+	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)       //Done
+	//option
+	CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error) //Done
+	GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error)
+	GetOptionById(dto *dtos.OptionIdDTO) (*models.Option, error)
+	UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option, error)
+	DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error)
 }
 
 type ProductService struct {
 	ProductRepository repository.IProductRepository
 }
+
+func (p ProductService) CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error) {
+	var proDTO dtos.ProductDTO
+	proDTO.ProductId = dto.Option.ProductId
+	countProd, prodErr := p.ProductRepository.CountProductById(&proDTO)
+	if prodErr != nil {
+		log.Println("CreateOption: Error not found product to create option", prodErr)
+		return nil, prodErr
+	}
+	if countProd == 0 {
+		log.Println("CreateOption: Error not found product to create option", prodErr)
+		return nil, errors.New("not found product")
+	}
+	option, err := p.ProductRepository.CreateOption(dto)
+	if err != nil {
+		log.Println("CreateOption: Error to create option", err)
+		return nil, err
+	}
+	return option, nil
+} //Done
+
+func (p ProductService) GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error) {
+	options, err := p.ProductRepository.GetOptions(dto)
+	if err != nil {
+		log.Println("GetOptions: Error get options", err)
+		return nil, err
+	}
+	return options, nil
+} //Done
+
+func (p ProductService) GetOptionById(dto *dtos.OptionIdDTO) (*models.Option, error) {
+	option, err := p.ProductRepository.GetOptionById(dto)
+	if err != nil {
+		log.Println("GetOptionById: Error get option", err)
+		return nil, err
+	}
+	return option, nil
+} //Done
+
+func (p ProductService) UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option, error) {
+	option, err := p.ProductRepository.UpdateOption(dto)
+	if err != nil {
+		log.Println("UpdateOption: Error call repo")
+		return nil, err
+	}
+	return option, nil
+}
+
+func (p ProductService) DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+//Product Repository
 
 func (p ProductService) CreateProduct(dto *dtos.CreateProductDTO) (*models.Product, error) {
 	createProduct, err := p.ProductRepository.CreateProduct(dto)
@@ -61,7 +123,7 @@ func (p ProductService) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, er
 		return nil, err
 	}
 	return product, nil
-}
+} //Done
 
 func NewProductService(productRepository repository.IProductRepository) *ProductService {
 	return &ProductService{ProductRepository: productRepository}

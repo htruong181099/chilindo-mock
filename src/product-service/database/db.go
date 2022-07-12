@@ -18,13 +18,13 @@ func Connect(connectionString string) {
 	log.Println("Connected to Database!")
 }
 func Migrate() {
-	if err := Instance.AutoMigrate(&models.Product{}, &models.Option{}, &models.Image{}); err != nil {
+	if err := Instance.AutoMigrate(&models.Product{}); err != nil {
 		log.Println(err)
 		return
 	}
-	//if err := Instance.AutoMigrate(&models.Option{}); err != nil {
-	//	log.Println(err)
-	//	return
-	//}
+	if err := Instance.AutoMigrate(&models.Option{}); err != nil {
+		log.Println(err)
+		return
+	}
 	log.Println("Database Migration Completed!")
 }

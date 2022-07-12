@@ -43,11 +43,11 @@ func main() {
 	//imageRoutes.SetRoute()
 
 	//Di Option
-	optionRepo := repository.NewOptionRepository(database.Instance)
-	optionSvc := services.NewOptionService(optionRepo)
-	optionCtr := controllers.NewOptionController(optionSvc)
-	optionRoutes := routes.NewOptionRoute(optionCtr, r)
-	optionRoutes.SetRouter()
+	//optionRepo := repository.NewOptionRepository(database.Instance)
+	//optionSvc := services.NewOptionService(optionRepo)
+	//optionCtr := controllers.NewOptionController(optionSvc)
+	//optionRoutes := routes.NewOptionRoute(optionCtr, r)
+	//optionRoutes.SetRouter()
 
 	if err := r.Run(":3030"); err != nil {
 		log.Println("Open port is fail")

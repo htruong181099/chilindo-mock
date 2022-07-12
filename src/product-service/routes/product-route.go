@@ -19,9 +19,18 @@ func (p ProductRoute) SetRouter() {
 	{
 		api.POST("/", p.ProductController.CreateProduct)
 		api.GET("/", p.ProductController.GetProducts)
-		api.GET("/:id", p.ProductController.GetProductById)
-		api.POST("/:id", p.ProductController.UpdateProduct)
-		api.DELETE("/:id", p.ProductController.DeleteProduct)
+		api.GET("/:productId", p.ProductController.GetProductById)
+		api.POST("/:productId", p.ProductController.UpdateProduct)
+		api.DELETE("/:productId", p.ProductController.DeleteProduct)
+		api.GET("/:productId/options", p.ProductController.GetOptions)
+		api.POST("/:productId/options", p.ProductController.CreateOption)
+
+	}
+
+	optionAPI := p.Router.Group("/api/options")
+	{
+		optionAPI.GET("/:optionId", p.ProductController.GetOptionById)
+		optionAPI.PATCH("/:optionId", p.ProductController.UpdateOption)
 	}
 }
 
