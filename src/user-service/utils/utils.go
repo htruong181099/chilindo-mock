@@ -3,6 +3,7 @@ package utils
 import (
 	"chilindo/src/user-service/config"
 	"chilindo/src/user-service/token"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -30,16 +31,19 @@ func (s *SMiddleWare) MiddleWare() gin.HandlerFunc {
 			return
 		}
 		tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
-		claim := s.tokenController.ExtractToken(tokenResult)
-		c.Set(config.UserID, claim.Id)
-		if claim.ExpiresAt < time.Now().Local().Unix() {
-			c.JSONP(http.StatusUnauthorized, gin.H{
-				"Message": "Token is Expired",
+		fmt.Println("Check Token", tokenResult)
+		claims := token.ExtractToken(tokenResult)
+		if claims.ExpiresAt < time.Now().Local().Unix() {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"Message": "Token is expired",
 			})
-			log.Println("MiddleWare: Error token is Expired")
+			log.Println("Error: Token is expired")
 			c.Abort()
 			return
 		}
+		c.Set(config.UserID, claims.Id)
+		//claims := s.tokenController.ExtractToken(tokenResult)
+		fmt.Println(claims)
 		c.Next()
 	}
 }

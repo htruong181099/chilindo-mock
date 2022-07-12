@@ -5,6 +5,7 @@ import (
 	"chilindo/src/user-service/dto"
 	"chilindo/src/user-service/services"
 	"chilindo/src/user-service/token"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -55,8 +56,9 @@ func (u *UserController) ChangePassword(c *gin.Context) {
 }
 
 func (u *UserController) GetUser(c *gin.Context) {
-	var dTo *dto.GetByUserIdDTO
+	var dTo dto.GetByUserIdDTO
 	userId, ok := c.Get(config.UserID)
+	fmt.Println(userId)
 	if !ok {
 		c.JSONP(http.StatusUnauthorized, gin.H{
 			"Message": "Unauthorized",
@@ -65,9 +67,8 @@ func (u *UserController) GetUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
 	dTo.UserId = userId.(int)
-	user, err := u.UserService.GetUserById(dTo)
+	user, err := u.UserService.GetUserById(&dTo)
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error get user",
@@ -76,7 +77,15 @@ func (u *UserController) GetUser(c *gin.Context) {
 		return
 	}
 	user.Password = ""
-	c.JSONP(http.StatusOK, user)
+	c.JSONP(http.StatusOK, gin.H{
+		"id":          user.Id,
+		"firstName":   user.FirstName,
+		"lastName":    user.LastName,
+		"username":    user.Username,
+		"email":       user.Email,
+		"phoneNumber": user.PhoneNumber,
+		"gender":      user.Gender,
+	})
 }
 
 func (u *UserController) CreateAddressByUserId(c *gin.Context) {
