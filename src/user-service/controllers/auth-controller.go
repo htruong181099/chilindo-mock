@@ -5,7 +5,6 @@ import (
 	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/services"
 	"chilindo/src/user-service/token"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -56,9 +55,8 @@ func (u AuthController) SignIn(c *gin.Context) {
 
 func (u AuthController) SignUp(c *gin.Context) {
 	userBody := dto.NewSignUpDTO(&models.User{})
-	fmt.Println(c.Request.Body)
+	//fmt.Println(c.Request.Body)
 	if err := c.ShouldBindJSON(&userBody.User); err != nil {
-		//userBody.User = userM
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
 		})
@@ -71,7 +69,7 @@ func (u AuthController) SignUp(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	c.JSONP(http.StatusOK, user)
+	c.JSONP(http.StatusCreated, user)
 }
 
 func NewAuthController(authService services.IAuthService) *AuthController {
