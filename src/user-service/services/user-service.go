@@ -12,13 +12,23 @@ type IUserService interface {
 	UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User, error)
 	GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, error)
 	GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error)
-	CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error)
-	DeletedAddressById(dto *dto.DeleteAddressByIdDTO) (*models.Address, error)
+	CreateAddress(dto *dto.AddressDTO) (*models.Address, error)
+	DeletedAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error)
+	UpdateAddressById(dto *dto.AddressDTO) (*models.Address, error)
 }
 
 type UserService struct {
 	UserRepository    repository.IUserRepository
 	AddressRepository repository.IAddressRepository
+}
+
+func (u *UserService) UpdateAddressById(dto *dto.AddressDTO) (*models.Address, error) {
+	address, err := u.AddressRepository.UpdateAddress(dto)
+	if err != nil {
+		log.Println("UpdateAddressById: Error to call repo in package service", err)
+		return nil, err
+	}
+	return address, nil
 }
 
 func (u *UserService) UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User, error) {
@@ -39,7 +49,7 @@ func (u *UserService) GetUserById(dto *dto.GetByUserIdDTO) (*models.User, error)
 	return user, nil
 }
 
-func (u *UserService) CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error) {
+func (u *UserService) CreateAddress(dto *dto.AddressDTO) (*models.Address, error) {
 	address, err := u.AddressRepository.CreateAddress(dto)
 	if err != nil {
 		log.Println("CreateAddress: Error Create address in package service", err)
@@ -64,9 +74,9 @@ func (u *UserService) GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, err
 		return nil, err
 	}
 	return address, nil
-}
+} // Done
 
-func (u *UserService) DeletedAddressById(dto *dto.DeleteAddressByIdDTO) (*models.Address, error) {
+func (u *UserService) DeletedAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error) {
 	address, err := u.AddressRepository.DeleteAddressById(dto)
 	if err != nil {
 		log.Println("DeletedAddress: Error Delete Address in package service")
@@ -74,6 +84,7 @@ func (u *UserService) DeletedAddressById(dto *dto.DeleteAddressByIdDTO) (*models
 	}
 	return address, nil
 }
+
 func NewUserService(userRepository repository.IUserRepository, addressRepository repository.IAddressRepository) *UserService {
 	return &UserService{UserRepository: userRepository, AddressRepository: addressRepository}
 }

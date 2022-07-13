@@ -9,7 +9,7 @@ type GetByUserIdDTO struct {
 type UpdatePasswordDTO struct {
 	UserId          int    `json:"userId"`
 	CurrentPassword string `json:"currentPassword"`
-	NewPassword     string `json:"newPassword"`
+	NewPassword     string `json:"newPassword" min:9`
 }
 
 type CreateUserDTO struct {
