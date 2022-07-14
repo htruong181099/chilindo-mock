@@ -252,4 +252,4 @@ func TestUserController_GetUser(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("Expect status is 200 but got %v", w.Code)
 	}
-} /Done
+} //Done
