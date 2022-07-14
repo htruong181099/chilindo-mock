@@ -2,9 +2,12 @@ package dto
 
 import "chilindo/src/user-service/models"
 
-type CreateAddressDTO struct {
+type AddressDTO struct {
 	Address *models.Address
-	UserId  int
+}
+
+func NewAddressDTO(address *models.Address) *AddressDTO {
+	return &AddressDTO{Address: address}
 }
 
 type GetAddressDTO struct {
@@ -18,10 +21,4 @@ type GetAddressByIdDTO struct {
 
 type UpdateAddressDTO struct {
 	Address *models.Address
-	UserId  int
-}
-
-type DeleteAddressByIdDTO struct {
-	AddressId int
-	UserId    int
 }

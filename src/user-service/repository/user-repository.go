@@ -20,7 +20,7 @@ type UserRepository struct {
 
 func (u UserRepository) UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User, error) {
 	var user *models.User
-	result := u.db.Where("user_id = ?", dto.UserId).Find(&user)
+	result := u.db.Where("id = ?", dto.UserId).Find(&user)
 	if result.Error != nil {
 		log.Println("UpdatePassword: Error in package repository", result.Error)
 		return nil, result.Error
@@ -39,10 +39,14 @@ func (u UserRepository) UpdatePassword(dto *dto.UpdatePasswordDTO) (*models.User
 
 func (u UserRepository) GetUserById(dto *dto.GetByUserIdDTO) (*models.User, error) {
 	var user *models.User
-	result := u.db.Where("id = ?", dto.UserId).Find(&user)
+	var count int64
+	result := u.db.Where("id = ?", dto.UserId).Find(&user).Count(&count)
 	if result.Error != nil {
 		log.Println("GetUserById: Error in package repository", result.Error)
 		return nil, result.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	return user, nil
 }

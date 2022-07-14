@@ -16,6 +16,7 @@ type JWTClaim struct {
 	Username string
 	Email    string
 	Id       int
+	//Role     string
 	jwt.StandardClaims
 }
 
@@ -25,6 +26,7 @@ func (j *JWTClaim) GenerateJWT(email string, username string, id int) (tokenStri
 		Email:    email,
 		Username: username,
 		Id:       id,
+		//Role:     role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
