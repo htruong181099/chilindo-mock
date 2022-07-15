@@ -30,12 +30,12 @@ type ProductService struct {
 func (p ProductService) CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error) {
 	var proDTO dtos.ProductDTO
 	proDTO.ProductId = dto.Option.ProductId
-	countProd, prodErr := p.ProductRepository.CountProductById(&proDTO)
+	prod, prodErr := p.ProductRepository.GetProductById(&proDTO)
 	if prodErr != nil {
 		log.Println("CreateOption: Error not found product to create option", prodErr)
 		return nil, prodErr
 	}
-	if countProd == 0 {
+	if prod == nil {
 		log.Println("CreateOption: Error not found product to create option", prodErr)
 		return nil, errors.New("not found product")
 	}

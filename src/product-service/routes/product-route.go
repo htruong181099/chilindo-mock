@@ -27,10 +27,10 @@ func (p ProductRoute) SetRouter() {
 		api.POST("/", client.CheckIsAdmin(p.AdminClient), p.ProductController.CreateProduct)
 		api.GET("/", p.ProductController.GetProducts)
 		api.GET("/:productId", p.ProductController.GetProductById)
-		api.POST("/:productId", p.ProductController.UpdateProduct)
-		api.DELETE("/:productId", p.ProductController.DeleteProduct)
+		api.PUT("/:productId", client.CheckIsAdmin(p.AdminClient), p.ProductController.UpdateProduct)
+		api.DELETE("/:productId", client.CheckIsAdmin(p.AdminClient), p.ProductController.DeleteProduct)
 		api.GET("/:productId/options", p.ProductController.GetOptions)
-		api.POST("/:productId/options", p.ProductController.CreateOption)
+		api.POST("/:productId/options", client.CheckIsAdmin(p.AdminClient), p.ProductController.CreateOption)
 
 	}
 
