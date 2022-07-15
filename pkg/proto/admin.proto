@@ -1,0 +1,17 @@
+syntax="proto3";
+
+option go_package = "./pkg/pb/admin";
+
+service AdminService {
+  rpc CheckIsAdmin(CheckIsAdminRequest) returns (CheckIsAdminResponse);
+}
+
+message CheckIsAdminRequest {
+  string Token = 1;
+}
+
+message CheckIsAdminResponse {
+  bool isAuth = 1;
+  bool isAdmin = 2;
+}
+

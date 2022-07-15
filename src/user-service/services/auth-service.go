@@ -1,15 +1,19 @@
 package services
 
 import (
+	"chilindo/pkg/pb/admin"
 	"chilindo/src/user-service/dto"
 	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/repository"
+	"chilindo/src/user-service/token"
 	"log"
+	"strings"
 )
 
 type IAuthService interface {
 	SignUp(dto *dto.SignUpDTO) (*models.User, error)
 	SignIn(dto *dto.SignInDTO) (*models.User, error)
+	CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckIsAdminResponse, error)
 }
 
 type AuthService struct {
@@ -36,4 +40,31 @@ func (u AuthService) SignIn(dto *dto.SignInDTO) (*models.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckIsAdminResponse, error) {
+	isAuth := false
+	isAdmin := false
+	tokenString := req.Token
+
+	tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
+	//fmt.Println("Check Token", tokenResult)
+
+	claims, err := token.ExtractToken(tokenResult)
+	if err != nil {
+		log.Println("CheckIsAdmin: ", err)
+		return nil, err
+	}
+
+	isAuth = true
+	log.Println(claims)
+	log.Println(claims.Role)
+	if claims.Role == "admin" {
+		isAdmin = true
+	}
+
+	return &admin.CheckIsAdminResponse{
+		IsAuth:  isAuth,
+		IsAdmin: isAdmin,
+	}, nil
 }
