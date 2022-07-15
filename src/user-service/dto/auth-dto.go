@@ -17,6 +17,10 @@ type SignUpDTO struct {
 	User *models.User
 }
 
+type CheckAdminDTO struct {
+	Token string
+}
+
 func NewSignUpDTO(user *models.User) *SignUpDTO {
 	return &SignUpDTO{User: user}
 }

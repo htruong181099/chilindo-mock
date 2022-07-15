@@ -39,7 +39,7 @@ func (u AuthController) SignIn(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	tokenString, errToken := u.Token.GenerateJWT(userLogin.Username, userLogin.Email, userLogin.Id)
+	tokenString, errToken := u.Token.GenerateJWT(userLogin.Username, userLogin.Email, userLogin.Id, userLogin.Role)
 	if errToken != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error SignIn",
