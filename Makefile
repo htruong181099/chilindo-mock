@@ -6,3 +6,7 @@ run-productsrv:
 
 gen-protoc-admin:
 	protoc --go_out=. --go-grpc_out=. .\pkg\proto\admin.proto
+gen-protoc-product:
+	protoc --go_out=. --go-grpc_out=. .\pkg\proto\product.proto
+gen-protoc-auction:
+	protoc --go_out=. --go-grpc_out=. .\pkg\proto\auction.proto
