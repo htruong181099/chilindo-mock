@@ -19,13 +19,11 @@ type BidRepository struct {
 
 func (b BidRepository) GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, error) {
 	var bid *[]models.Bid
-	var count int64
-	record := b.db.Where("auction_id = ?", dto.AuctionId).Find(&bid).Count(&count)
+
+	record := b.db.Where("auction_id = ?", dto.AuctionId).Find(&bid)
 	if record.Error != nil {
+		log.Println("GetBidsOfAuction: Error to find bid", record.Error)
 		return nil, record.Error
-	}
-	if count == 0 {
-		return nil, nil
 	}
 	return bid, nil
 } //Done

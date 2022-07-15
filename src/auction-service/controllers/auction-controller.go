@@ -45,7 +45,9 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to create Auction",
 		})
-		log.Fatalf("CreateAuction: Error to ShouldBindJSON in package controller %v", err)
+		log.Println("CreateAuction: Error to ShouldBindJSON in package controller", err)
+		c.Abort()
+		return
 	}
 	fmt.Println("body", auctionBodyReq)
 	startingTime, errStat := time.Parse(time.RFC3339, auctionBodyReq.StartingTime)
@@ -53,14 +55,18 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to create Auction",
 		})
-		log.Fatalf("CreateAuction: Error to parse startingTime in package controller %v", errStat)
+		log.Println("CreateAuction: Error to parse startingTime in package controller ", errStat)
+		c.Abort()
+		return
 	}
 	endingTime, errEnd := time.Parse(time.RFC3339, auctionBodyReq.EndingTime)
 	if errEnd != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to create Auction",
 		})
-		log.Fatalf("CreateAuction: Error to parse endingTime in package controller %v", errEnd)
+		log.Println("CreateAuction: Error to parse endingTime in package controller", errEnd)
+		c.Abort()
+		return
 	}
 	var auction = &models.Auction{
 		Id:           auctionBodyReq.Id,
@@ -79,7 +85,9 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to create Auction",
 		})
-		log.Fatalf("CreateAuction: Error to CreateAuction in package controller %v", err)
+		log.Println("CreateAuction: Error to CreateAuction in package controller", err)
+		c.Abort()
+		return
 	}
 	c.JSON(http.StatusCreated, auc)
 
