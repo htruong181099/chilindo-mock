@@ -30,7 +30,7 @@ func main() {
 	database.Migrate()
 
 	r := router()
-
+	//DI Auth
 	auctionRepository := repository.NewAuctionRepository(database.Instance)
 	auctionService := services.NewAuctionService(auctionRepository)
 	auctionController := controllers.NewAuctionController(auctionService)

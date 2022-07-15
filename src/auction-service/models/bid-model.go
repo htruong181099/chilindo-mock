@@ -10,7 +10,7 @@ type Bid struct {
 	Id         int       `json:"id" gorm:"primaryKey"`
 	BidderId   int       `json:"bidderId"`
 	AuctionId  int       `json:"auctionId"`
-	BidTime    time.Time `json:"bidTime" gorm:"default"`
+	BidTime    time.Time `json:"bidTime"`
 	Amount     float32   `json:"amount"`
 	Auction    Auction   `json:"-" gorm:"foreignKey:AuctionId"`
 }

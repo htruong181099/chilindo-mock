@@ -22,6 +22,6 @@ func (a AuctionRoute) SetRouter() {
 	api := a.Router.Group("/api/auction")
 	{
 		api.GET("/")
-		api.POST("/")
+		api.POST("/", a.AuctionController.CreateAuction)
 	}
 }
