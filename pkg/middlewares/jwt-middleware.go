@@ -1,8 +1,8 @@
 package middlewares
 
 import (
+	jwtUtil "chilindo/pkg/utils"
 	"chilindo/src/user-service/config"
-	"chilindo/src/user-service/token"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -14,7 +14,7 @@ type IJwtMiddleWare interface {
 }
 
 type JwtMiddleWare struct {
-	tokenController *token.JWTClaim
+	tokenController *jwtUtil.JWTClaim
 }
 
 func (s *JwtMiddleWare) IsAuth() gin.HandlerFunc {
@@ -29,9 +29,8 @@ func (s *JwtMiddleWare) IsAuth() gin.HandlerFunc {
 			return
 		}
 		tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
-		//fmt.Println("Check Token", tokenResult)
 
-		claims, err := token.ExtractToken(tokenResult)
+		claims, err := jwtUtil.ExtractToken(tokenResult)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"Message": "Token is expired",
@@ -41,8 +40,6 @@ func (s *JwtMiddleWare) IsAuth() gin.HandlerFunc {
 			return
 		}
 		c.Set(config.UserID, claims.Id)
-		//claims := s.tokenController.ExtractToken(tokenResult)
-		//fmt.Println(claims)
 		c.Next()
 	}
 }

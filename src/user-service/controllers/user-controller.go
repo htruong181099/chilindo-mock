@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	jwtUtil "chilindo/pkg/utils"
 	"chilindo/src/user-service/config"
 	"chilindo/src/user-service/dto"
 	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/services"
-	"chilindo/src/user-service/token"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -29,7 +29,7 @@ type IUserController interface {
 
 type UserController struct {
 	UserService services.IUserService
-	Token       *token.JWTClaim
+	Token       *jwtUtil.JWTClaim
 }
 
 func (u *UserController) ChangePassword(c *gin.Context) {

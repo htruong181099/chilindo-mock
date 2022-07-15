@@ -1,4 +1,4 @@
-package client
+package controllers
 
 import (
 	pb "chilindo/pkg/pb/admin"
@@ -7,7 +7,17 @@ import (
 	"net/http"
 )
 
-func CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc {
+type IAdminServiceController interface {
+	CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc
+}
+
+type AdminServiceController struct{}
+
+func NewAdminServiceController() *AdminServiceController {
+	return &AdminServiceController{}
+}
+
+func (a AdminServiceController) CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
@@ -28,8 +38,6 @@ func CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		log.Println("isAuth: ", res.IsAuth)
-		log.Println("isAdmin: ", res.IsAdmin)
 		if !(res.IsAuth && res.IsAdmin) {
 			c.JSON(http.StatusForbidden, gin.H{
 				"Message": "Forbidden",

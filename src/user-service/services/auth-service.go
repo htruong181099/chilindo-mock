@@ -2,10 +2,10 @@ package services
 
 import (
 	"chilindo/pkg/pb/admin"
+	jwtUtil "chilindo/pkg/utils"
 	"chilindo/src/user-service/dto"
 	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/repository"
-	"chilindo/src/user-service/token"
 	"log"
 	"strings"
 )
@@ -50,7 +50,7 @@ func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckI
 	tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
 	//fmt.Println("Check Token", tokenResult)
 
-	claims, err := token.ExtractToken(tokenResult)
+	claims, err := jwtUtil.ExtractToken(tokenResult)
 	if err != nil {
 		log.Println("CheckIsAdmin: ", err)
 		return nil, err
