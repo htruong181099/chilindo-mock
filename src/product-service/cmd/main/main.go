@@ -2,6 +2,7 @@ package main
 
 import (
 	"chilindo/pkg/pb/admin"
+	"chilindo/src/product-service/cmd/rpc-server"
 	"chilindo/src/product-service/controllers"
 	controllers2 "chilindo/src/product-service/controllers/admin-rpc"
 	"chilindo/src/product-service/database"
@@ -13,16 +14,16 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"log"
+	"net"
 	"os"
 )
 
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
-)
-
-const (
-	addr     = "localhost:50051"
-	certFile = "src/product-service/cmd/ssl/ca.crt"
+	ginPort              = ":3030"
+	grpcClientPort       = "localhost:50051"
+	grpcServerPort       = "localhost:50052"
+	certFile             = "pkg/ssl/ca.crt"
 )
 
 func loadTLSCredentials() (credentials.TransportCredentials, error) {
@@ -56,7 +57,8 @@ func main() {
 
 	opts = append(opts, grpc.WithTransportCredentials(creds))
 
-	conn, err := grpc.Dial(addr, opts...)
+	//grpc CLient
+	conn, err := grpc.Dial(grpcClientPort, opts...)
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
@@ -73,10 +75,25 @@ func main() {
 	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr, adminClient)
 	productRoute.SetRouter()
 
-	if err := r.Run(":3030"); err != nil {
-		log.Println("Open port is fail")
-		return
+	//Serve Gin Server
+	go func() {
+		if err := r.Run(ginPort); err != nil {
+			log.Println("Open port is fail")
+			return
+		}
+	}()
+
+	//Serve Grpc Server
+	lis, err := net.Listen("tcp", grpcServerPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
+
+	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+	log.Println("gRPC server admin is running")
+
 }
 
 func router() *gin.Engine {
