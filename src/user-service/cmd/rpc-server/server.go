@@ -16,8 +16,8 @@ import (
 
 const (
 	addr     = ":50051"
-	certFile = "src/product-service/cmd/ssl/server.crt"
-	keyFile  = "src/product-service/cmd/ssl/server.pem"
+	certFile = "pkg/ssl/server.crt"
+	keyFile  = "pkg/ssl/server.pem"
 )
 
 type AdminServer struct {
