@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	jwtUtil "chilindo/pkg/utils"
 	"chilindo/src/user-service/dto"
 	"chilindo/src/user-service/models"
 	"chilindo/src/user-service/services"
-	"chilindo/src/user-service/token"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -17,7 +17,7 @@ type IAuthController interface {
 
 type AuthController struct {
 	AuthService services.IAuthService
-	Token       *token.JWTClaim
+	Token       *jwtUtil.JWTClaim
 }
 
 func (u AuthController) SignIn(c *gin.Context) {
