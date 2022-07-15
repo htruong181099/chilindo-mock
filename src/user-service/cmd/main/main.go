@@ -1,6 +1,7 @@
 package main
 
 import (
+	rpc_server "chilindo/src/user-service/cmd/rpc-server"
 	"chilindo/src/user-service/controllers"
 	"chilindo/src/user-service/database"
 	"chilindo/src/user-service/repository"
@@ -9,11 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
+	"net"
 	"os"
 )
 
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
+)
+
+const (
+	addr = ":50051"
 )
 
 func main() {
@@ -45,10 +51,24 @@ func main() {
 	userRouter := routes.NewUserRoute(userController, r)
 	userRouter.SetRouter()
 
-	if err := r.Run(":3000"); err != nil {
-		log.Println("Open port is fail")
-		return
+	go func() {
+		if err := r.Run(":3000"); err != nil {
+			log.Println("Open port is fail")
+			return
+		}
+		log.Println("Run port 3000")
+	}()
+
+	lis, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
+
+	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+	log.Println("gRPC server admin is running")
+
 }
 
 func router() *gin.Engine {

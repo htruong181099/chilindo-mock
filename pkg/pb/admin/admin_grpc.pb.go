@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.2
-// source: src/admin-service/admin.proto
+// source: pkg/proto/admin.proto
 
-package pb
+package admin
 
 import (
 	context "context"
@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminServiceClient interface {
-	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
+	CheckIsAdmin(ctx context.Context, in *CheckIsAdminRequest, opts ...grpc.CallOption) (*CheckIsAdminResponse, error)
 }
 
 type adminServiceClient struct {
@@ -33,9 +33,9 @@ func NewAdminServiceClient(cc grpc.ClientConnInterface) AdminServiceClient {
 	return &adminServiceClient{cc}
 }
 
-func (c *adminServiceClient) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error) {
-	out := new(CreateProductResponse)
-	err := c.cc.Invoke(ctx, "/admin.AdminService/CreateProduct", in, out, opts...)
+func (c *adminServiceClient) CheckIsAdmin(ctx context.Context, in *CheckIsAdminRequest, opts ...grpc.CallOption) (*CheckIsAdminResponse, error) {
+	out := new(CheckIsAdminResponse)
+	err := c.cc.Invoke(ctx, "/AdminService/CheckIsAdmin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *adminServiceClient) CreateProduct(ctx context.Context, in *CreateProduc
 // All implementations must embed UnimplementedAdminServiceServer
 // for forward compatibility
 type AdminServiceServer interface {
-	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
+	CheckIsAdmin(context.Context, *CheckIsAdminRequest) (*CheckIsAdminResponse, error)
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
@@ -54,8 +54,8 @@ type AdminServiceServer interface {
 type UnimplementedAdminServiceServer struct {
 }
 
-func (UnimplementedAdminServiceServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
+func (UnimplementedAdminServiceServer) CheckIsAdmin(context.Context, *CheckIsAdminRequest) (*CheckIsAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckIsAdmin not implemented")
 }
 func (UnimplementedAdminServiceServer) mustEmbedUnimplementedAdminServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterAdminServiceServer(s grpc.ServiceRegistrar, srv AdminServiceServer)
 	s.RegisterService(&AdminService_ServiceDesc, srv)
 }
 
-func _AdminService_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateProductRequest)
+func _AdminService_CheckIsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckIsAdminRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServiceServer).CreateProduct(ctx, in)
+		return srv.(AdminServiceServer).CheckIsAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/admin.AdminService/CreateProduct",
+		FullMethod: "/AdminService/CheckIsAdmin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServiceServer).CreateProduct(ctx, req.(*CreateProductRequest))
+		return srv.(AdminServiceServer).CheckIsAdmin(ctx, req.(*CheckIsAdminRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -92,14 +92,14 @@ func _AdminService_CreateProduct_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AdminService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "admin.AdminService",
+	ServiceName: "AdminService",
 	HandlerType: (*AdminServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateProduct",
-			Handler:    _AdminService_CreateProduct_Handler,
+			MethodName: "CheckIsAdmin",
+			Handler:    _AdminService_CheckIsAdmin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "src/admin-service/admin.proto",
+	Metadata: "pkg/proto/admin.proto",
 }

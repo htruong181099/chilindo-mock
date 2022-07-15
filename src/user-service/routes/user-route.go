@@ -23,8 +23,9 @@ func (u UserRoute) SetRouter() {
 		api.PATCH("/password", u.UserController.ChangePassword)
 		api.GET("/address", u.UserController.GetAddress)
 		api.GET("/address/:addressId", u.UserController.GetAddressById)
-		api.POST("/address/", u.UserController.CreateAddressByUserId)
-		//api.DELETE("/address/", u.UserController.)
+		api.POST("/address", u.UserController.CreateAddressByUserId)
+		api.DELETE("/address/:addressId", u.UserController.DeleteAddressById)
+		api.PATCH("/address/:addressId", u.UserController.UpdateAddressById)
 	}
 
 }

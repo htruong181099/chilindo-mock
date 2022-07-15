@@ -14,12 +14,12 @@ type IProductRepository interface {
 	GetProductById(dto *dtos.ProductDTO) (*models.Product, error)      //Done
 	UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) //Done
 	DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error)       //Done
-	CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error)    //Done
-	GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error)       //Done
+	//option
+	CreateOption(dto *dtos.CreateOptionDTO) (*models.Option, error) //Done
+	GetOptions(dto *dtos.ProductIdDTO) (*[]models.Option, error)    //Done
 	GetOptionById(dto *dtos.OptionIdDTO) (*models.Option, error)
 	UpdateOption(dto *dtos.UpdateOptionDTO) (*models.Option, error)
 	DeleteOption(dto *dtos.OptionIdDTO) (*models.Option, error)
-	CountProductById(dto *dtos.ProductDTO) (int64, error)
 }
 
 type ProductRepository struct {
@@ -173,14 +173,4 @@ func (p ProductRepository) DeleteProduct(dto *dtos.ProductDTO) (*models.Product,
 		return nil, recordFind.Error
 	}
 	return product, nil
-} //Done
-
-func (p ProductRepository) CountProductById(dto *dtos.ProductDTO) (int64, error) {
-	var count int64
-	record := p.db.Model(&models.Product{}).Where("id = ?", dto.ProductId).Count(&count)
-	if record.Error != nil {
-		log.Println("CountProductById: Get product by ID", record.Error)
-		return count, record.Error
-	}
-	return count, nil
 } //Done
