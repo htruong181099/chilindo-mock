@@ -3,6 +3,7 @@ package main
 import (
 	"chilindo/pkg/pb/admin"
 	"chilindo/src/product-service/controllers"
+	controllers2 "chilindo/src/product-service/controllers/admin-rpc"
 	"chilindo/src/product-service/database"
 	"chilindo/src/product-service/repository"
 	"chilindo/src/product-service/routes"
@@ -61,14 +62,15 @@ func main() {
 	}
 	defer conn.Close()
 
-	AdminClient := admin.NewAdminServiceClient(conn)
+	adminClient := admin.NewAdminServiceClient(conn)
 
 	r := router()
 	//DI Product
 	productRepo := repository.NewProductRepository(database.Instance)
 	productScv := services.NewProductService(productRepo)
 	productCtr := controllers.NewProductController(productScv)
-	productRoute := routes.NewProductRoute(productCtr, r, AdminClient)
+	adminSrvCtr := controllers2.NewAdminServiceController()
+	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr, adminClient)
 	productRoute.SetRouter()
 
 	if err := r.Run(":3030"); err != nil {
