@@ -66,7 +66,11 @@ func (u AuthController) SignUp(c *gin.Context) {
 	}
 	user, err := u.AuthService.SignUp(userBody)
 	if err != nil {
-		log.Println(err)
+		c.JSONP(http.StatusBadRequest, gin.H{
+			"Message": "Error to sign up",
+		})
+		log.Println("SignUp: Error Call service", err)
+		c.Abort()
 		return
 	}
 	c.JSONP(http.StatusCreated, user)

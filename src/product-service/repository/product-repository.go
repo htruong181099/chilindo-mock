@@ -125,6 +125,8 @@ func (p ProductRepository) CreateProduct(dto *dtos.CreateProductDTO) (*models.Pr
 func (p ProductRepository) GetProductById(dto *dtos.ProductDTO) (*models.Product, error) {
 	var product *models.Product
 	var count int64
+	//log.Println("pid:", dto.ProductId)
+	log.Println("Check Db: ", p.db)
 	record := p.db.Where("id = ?", dto.ProductId).
 		Find(&product).
 		Count(&count)

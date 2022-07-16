@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"chilindo/pkg/pb/product"
 	"chilindo/src/auction-service/dtos"
 	"chilindo/src/auction-service/models"
 	"chilindo/src/auction-service/services"
@@ -19,6 +20,11 @@ type IAuctionController interface {
 
 type AuctionController struct {
 	AuctionService services.IAuctionService
+	ProductClient  product.ProductServiceClient
+}
+
+func NewAuctionController(auctionService services.IAuctionService, productClient product.ProductServiceClient) *AuctionController {
+	return &AuctionController{AuctionService: auctionService, ProductClient: productClient}
 }
 
 func (a AuctionController) GetAuctions(c *gin.Context) {
@@ -40,6 +46,7 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		IsActive     bool    `json:"isActive" gorm:"default:false"`
 		LowestBid    float32 `json:"lowestBid"`
 	}
+
 	var auctionBodyReq *auctionBody
 	if err := c.ShouldBindJSON(&auctionBodyReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -68,9 +75,30 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
+	in := &product.GetProductRequest{ProductId: auctionBodyReq.ProductId}
+	res, errRes := a.ProductClient.GetProduct(c, in)
+	if errRes != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to create Auction",
+		})
+		log.Println("CreateAuction: Error to call productService rpc server", errRes)
+		c.Abort()
+		return
+	}
+
+	if res.GetIsFound() == false {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not found product",
+		})
+		log.Println("CreateAuction: Not found product")
+		c.Abort()
+		return
+	}
+
 	var auction = &models.Auction{
 		Id:           auctionBodyReq.Id,
-		ProductId:    auctionBodyReq.ProductId,
+		ProductId:    res.GetId(),
 		StartingTime: startingTime,
 		EndingTime:   endingTime,
 		IsActive:     auctionBodyReq.IsActive,
@@ -92,7 +120,3 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 	c.JSON(http.StatusCreated, auc)
 
 } //Done
-
-func NewAuctionController(auctionService services.IAuctionService) *AuctionController {
-	return &AuctionController{AuctionService: auctionService}
-}

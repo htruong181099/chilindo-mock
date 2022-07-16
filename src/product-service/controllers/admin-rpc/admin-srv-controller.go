@@ -1,23 +1,25 @@
 package controllers
 
 import (
-	pb "chilindo/pkg/pb/admin"
+	adminPb "chilindo/pkg/pb/admin"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 )
 
 type IAdminServiceController interface {
-	CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc
+	CheckIsAdmin() gin.HandlerFunc
 }
 
-type AdminServiceController struct{}
-
-func NewAdminServiceController() *AdminServiceController {
-	return &AdminServiceController{}
+type AdminServiceController struct {
+	AdminClient adminPb.AdminServiceClient
 }
 
-func (a AdminServiceController) CheckIsAdmin(adminClient pb.AdminServiceClient) gin.HandlerFunc {
+func NewAdminServiceController(adminClient adminPb.AdminServiceClient) *AdminServiceController {
+	return &AdminServiceController{AdminClient: adminClient}
+}
+
+func (a AdminServiceController) CheckIsAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
@@ -27,7 +29,7 @@ func (a AdminServiceController) CheckIsAdmin(adminClient pb.AdminServiceClient) 
 			c.Abort()
 			return
 		}
-		res, err := adminClient.CheckIsAdmin(c, &pb.CheckIsAdminRequest{
+		res, err := a.AdminClient.CheckIsAdmin(c, &adminPb.CheckIsAdminRequest{
 			Token: token,
 		})
 		if err != nil {

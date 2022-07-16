@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chilindo/pkg/pb/admin"
+	rpcClient "chilindo/src/product-service/cmd/rpc-client"
 	"chilindo/src/product-service/cmd/rpc-server"
 	"chilindo/src/product-service/controllers"
 	controllers2 "chilindo/src/product-service/controllers/admin-rpc"
@@ -57,22 +57,14 @@ func main() {
 
 	opts = append(opts, grpc.WithTransportCredentials(creds))
 
-	//grpc CLient
-	conn, err := grpc.Dial(grpcClientPort, opts...)
-	if err != nil {
-		log.Fatalf("failed to connect: %v", err)
-	}
-	defer conn.Close()
-
-	adminClient := admin.NewAdminServiceClient(conn)
-
+	adminClient := rpcClient.SetupAdminClient()
 	r := router()
 	//DI Product
 	productRepo := repository.NewProductRepository(database.Instance)
 	productScv := services.NewProductService(productRepo)
 	productCtr := controllers.NewProductController(productScv)
-	adminSrvCtr := controllers2.NewAdminServiceController()
-	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr, adminClient)
+	adminSrvCtr := controllers2.NewAdminServiceController(adminClient)
+	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr)
 	productRoute.SetRouter()
 
 	//Serve Gin Server
@@ -92,7 +84,6 @@ func main() {
 	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-	log.Println("gRPC server admin is running")
 
 }
 

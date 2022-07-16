@@ -53,7 +53,7 @@ func main() {
 	//DI Auth
 	auctionRepository := repository.NewAuctionRepository(database.Instance)
 	auctionService := services.NewAuctionService(auctionRepository)
-	auctionController := controllers.NewAuctionController(auctionService)
+	auctionController := controllers.NewAuctionController(auctionService, productClient)
 	auctionRouter := routes.NewAuctionRoute(auctionController, r)
 	auctionRouter.SetRouter()
 
@@ -75,7 +75,6 @@ func setUpProductClient() *grpc.ClientConn {
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
-	defer conn.Close()
 
 	log.Println("Listening from port :", prodClientPort)
 	return conn
