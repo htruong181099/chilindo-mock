@@ -4,6 +4,7 @@ option go_package = "./pkg/pb/admin";
 
 service AdminService {
   rpc CheckIsAdmin(CheckIsAdminRequest) returns (CheckIsAdminResponse);
+  rpc CheckUserAuth(CheckUserAuthRequest) returns (CheckUserAuthResponse);
 }
 
 message CheckIsAdminRequest {
@@ -13,5 +14,13 @@ message CheckIsAdminRequest {
 message CheckIsAdminResponse {
   bool isAuth = 1;
   bool isAdmin = 2;
+}
+
+message CheckUserAuthRequest {
+  string Token = 1;
+}
+message CheckUserAuthResponse {
+  bool isAuth = 1;
+  int32 userId = 2;
 }
 

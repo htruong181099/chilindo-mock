@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminServiceClient interface {
 	CheckIsAdmin(ctx context.Context, in *CheckIsAdminRequest, opts ...grpc.CallOption) (*CheckIsAdminResponse, error)
+	CheckUserAuth(ctx context.Context, in *CheckUserAuthRequest, opts ...grpc.CallOption) (*CheckUserAuthResponse, error)
 }
 
 type adminServiceClient struct {
@@ -42,11 +43,21 @@ func (c *adminServiceClient) CheckIsAdmin(ctx context.Context, in *CheckIsAdminR
 	return out, nil
 }
 
+func (c *adminServiceClient) CheckUserAuth(ctx context.Context, in *CheckUserAuthRequest, opts ...grpc.CallOption) (*CheckUserAuthResponse, error) {
+	out := new(CheckUserAuthResponse)
+	err := c.cc.Invoke(ctx, "/AdminService/CheckUserAuth", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServiceServer is the server API for AdminService service.
 // All implementations must embed UnimplementedAdminServiceServer
 // for forward compatibility
 type AdminServiceServer interface {
 	CheckIsAdmin(context.Context, *CheckIsAdminRequest) (*CheckIsAdminResponse, error)
+	CheckUserAuth(context.Context, *CheckUserAuthRequest) (*CheckUserAuthResponse, error)
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedAdminServiceServer struct {
 
 func (UnimplementedAdminServiceServer) CheckIsAdmin(context.Context, *CheckIsAdminRequest) (*CheckIsAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckIsAdmin not implemented")
+}
+func (UnimplementedAdminServiceServer) CheckUserAuth(context.Context, *CheckUserAuthRequest) (*CheckUserAuthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAuth not implemented")
 }
 func (UnimplementedAdminServiceServer) mustEmbedUnimplementedAdminServiceServer() {}
 
@@ -88,6 +102,24 @@ func _AdminService_CheckIsAdmin_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminService_CheckUserAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckUserAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServiceServer).CheckUserAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/AdminService/CheckUserAuth",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServiceServer).CheckUserAuth(ctx, req.(*CheckUserAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminService_ServiceDesc is the grpc.ServiceDesc for AdminService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var AdminService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckIsAdmin",
 			Handler:    _AdminService_CheckIsAdmin_Handler,
+		},
+		{
+			MethodName: "CheckUserAuth",
+			Handler:    _AdminService_CheckUserAuth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
