@@ -14,6 +14,7 @@ type IAuthService interface {
 	SignUp(dto *dto.SignUpDTO) (*models.User, error)
 	SignIn(dto *dto.SignInDTO) (*models.User, error)
 	CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckIsAdminResponse, error)
+	CheckUserAuth(req *admin.CheckUserAuthRequest) (*admin.CheckUserAuthResponse, error)
 }
 
 type AuthService struct {
@@ -48,7 +49,6 @@ func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckI
 	tokenString := req.Token
 
 	tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
-	//fmt.Println("Check Token", tokenResult)
 
 	claims, err := jwtUtil.ExtractToken(tokenResult)
 	if err != nil {
@@ -57,8 +57,6 @@ func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckI
 	}
 
 	isAuth = true
-	log.Println(claims)
-	log.Println(claims.Role)
 	if claims.Role == "admin" {
 		isAdmin = true
 	}
@@ -66,5 +64,27 @@ func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckI
 	return &admin.CheckIsAdminResponse{
 		IsAuth:  isAuth,
 		IsAdmin: isAdmin,
+	}, nil
+}
+
+func (u AuthService) CheckUserAuth(req *admin.CheckUserAuthRequest) (*admin.CheckUserAuthResponse, error) {
+	isAuth := false
+	tokenString := req.Token
+
+	tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
+
+	claims, err := jwtUtil.ExtractToken(tokenResult)
+	if err != nil {
+		log.Println("CheckIsAdmin: ", err)
+		return nil, err
+	}
+	isAuth = true
+	userId := int32(claims.Id)
+	log.Println(claims)
+	log.Println(claims.Role)
+
+	return &admin.CheckUserAuthResponse{
+		IsAuth: isAuth,
+		UserId: userId,
 	}, nil
 }

@@ -55,7 +55,6 @@ func (u AuthController) SignIn(c *gin.Context) {
 
 func (u AuthController) SignUp(c *gin.Context) {
 	userBody := dto.NewSignUpDTO(&models.User{})
-	//fmt.Println(c.Request.Body)
 	if err := c.ShouldBindJSON(&userBody.User); err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
@@ -66,7 +65,11 @@ func (u AuthController) SignUp(c *gin.Context) {
 	}
 	user, err := u.AuthService.SignUp(userBody)
 	if err != nil {
-		log.Println(err)
+		c.JSONP(http.StatusBadRequest, gin.H{
+			"Message": "Error to sign up",
+		})
+		log.Println("SignUp: Error call auth service", err)
+		c.Abort()
 		return
 	}
 	c.JSONP(http.StatusCreated, user)

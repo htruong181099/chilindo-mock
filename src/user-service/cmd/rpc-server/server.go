@@ -63,3 +63,8 @@ func (a *AdminServer) CheckIsAdmin(ctx context.Context, in *admin.CheckIsAdminRe
 
 	return res, nil
 }
+
+func (a *AdminServer) CheckUserAuth(ctx context.Context, in *admin.CheckUserAuthRequest) (*admin.CheckUserAuthResponse, error) {
+	log.Printf("Login request: %v\n", in)
+	return nil, nil
+}
