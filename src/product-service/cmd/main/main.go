@@ -11,8 +11,6 @@ import (
 	"chilindo/src/product-service/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"os"
@@ -21,18 +19,8 @@ import (
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
 	ginPort              = ":3030"
-	grpcClientPort       = "localhost:50051"
 	grpcServerPort       = "localhost:50052"
-	certFile             = "pkg/ssl/ca.crt"
 )
-
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	creds, err := credentials.NewClientTLSFromFile(certFile, "")
-	if err != nil {
-		return nil, err
-	}
-	return creds, nil
-}
 
 func main() {
 	envErr := godotenv.Load(".env")
@@ -48,18 +36,10 @@ func main() {
 	database.Migrate()
 
 	//setup client
-	var opts []grpc.DialOption
-	creds, err := loadTLSCredentials()
+	grpcClient := rpcClient.NewRPCClient()
+	adminClient := grpcClient.SetUpAdminClient()
 
-	if err != nil {
-		log.Fatalf("Failed to load credentials: %v", err)
-	}
-
-	opts = append(opts, grpc.WithTransportCredentials(creds))
-
-	adminClient := rpcClient.SetupAdminClient()
 	r := router()
-	//DI Product
 	productRepo := repository.NewProductRepository(database.Instance)
 	productScv := services.NewProductService(productRepo)
 	productCtr := controllers.NewProductController(productScv)

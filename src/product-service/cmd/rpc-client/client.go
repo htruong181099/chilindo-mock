@@ -2,37 +2,39 @@ package rpc_client
 
 import (
 	"chilindo/pkg/pb/admin"
+	"chilindo/pkg/ssl"
 	"fmt"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"log"
 )
 
 const (
-	grpcClientPort = "localhost:50051"
-	certFile       = "pkg/ssl/ca.crt"
+	adminClientPort = "localhost:50051"
 )
 
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	creds, err := credentials.NewClientTLSFromFile(certFile, "")
-	if err != nil {
-		return nil, err
-	}
-	return creds, nil
+type IRPCClient interface {
+	SetUpAdminClient() admin.AdminServiceClient
 }
-func SetupAdminClient() admin.AdminServiceClient {
+
+type RPCClient struct{}
+
+func NewRPCClient() *RPCClient {
+	return &RPCClient{}
+}
+
+func (R RPCClient) SetUpAdminClient() admin.AdminServiceClient {
 	var opts []grpc.DialOption
-	creds, err := loadTLSCredentials()
+	creds, err := ssl.LoadTLSCredentials()
 	if err != nil {
 		log.Fatalf("Failed to load credentials: %v", err)
 	}
 	opts = append(opts, grpc.WithTransportCredentials(creds))
-	conn, dialErr := grpc.Dial(grpcClientPort, opts...)
+	conn, dialErr := grpc.Dial(adminClientPort, opts...)
 	if dialErr != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
 
 	adminClient := admin.NewAdminServiceClient(conn)
-	fmt.Println("Listen to AdminService on port ", grpcClientPort)
+	fmt.Println("Listen to AdminService on port ", adminClientPort)
 	return adminClient
 }

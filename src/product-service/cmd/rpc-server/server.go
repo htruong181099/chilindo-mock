@@ -52,19 +52,6 @@ func RunGRPCServer(enabledTLS bool, lis net.Listener) error {
 }
 
 func (p *ProductServer) GetProduct(ctx context.Context, in *product.GetProductRequest) (*product.GetProductResponse, error) {
-	//log.Printf("Login request: %v\n", in)
-	//
-	//res, err := a.AuthService.CheckIsAdmin(in)
-	//
-	//if err != nil {
-	//	return nil, status.Errorf(codes.Internal, "Internal error: %v", err)
-	//}
-	//
-	//if res == nil {
-	//	return nil, status.Errorf(codes.NotFound, "User not found")
-	//}
-	//
-	//return res, nil
 	log.Printf("Login request: %v\n", in)
 	pid := in.GetProductId()
 	if pid == "" {
@@ -79,11 +66,9 @@ func (p *ProductServer) GetProduct(ctx context.Context, in *product.GetProductRe
 		return nil, status.Errorf(codes.Internal, "Internal error: %v", err)
 	}
 	if prod == nil {
-		log.Println("here")
 		return &product.GetProductResponse{
 			IsFound: false,
 		}, nil
-		//return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	response := &product.GetProductResponse{
 		IsFound:     true,
