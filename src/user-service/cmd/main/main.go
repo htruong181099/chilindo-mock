@@ -1,7 +1,7 @@
 package main
 
 import (
-	rpc_server "chilindo/src/user-service/cmd/rpc-server"
+	rpcServer "chilindo/src/user-service/cmd/rpc-server"
 	"chilindo/src/user-service/controllers"
 	"chilindo/src/user-service/database"
 	"chilindo/src/user-service/repository"
@@ -19,7 +19,8 @@ const (
 )
 
 const (
-	addr = ":50051"
+	ginPort = ":3000"
+	addr    = ":50051"
 )
 
 func main() {
@@ -52,7 +53,7 @@ func main() {
 	userRouter.SetRouter()
 
 	go func() {
-		if err := r.Run(":3000"); err != nil {
+		if err := r.Run(ginPort); err != nil {
 			log.Println("Open port is fail")
 			return
 		}
@@ -64,7 +65,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
+	if err = rpcServer.RunGRPCServer(true, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 	log.Println("gRPC server admin is running")

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chilindo/pkg/pb/admin"
+	rpcClient "chilindo/src/product-service/cmd/rpc-client"
 	"chilindo/src/product-service/cmd/rpc-server"
 	"chilindo/src/product-service/controllers"
 	controllers2 "chilindo/src/product-service/controllers/admin-rpc"
@@ -11,8 +11,6 @@ import (
 	"chilindo/src/product-service/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 	"os"
@@ -21,18 +19,8 @@ import (
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
 	ginPort              = ":3030"
-	grpcClientPort       = "localhost:50051"
 	grpcServerPort       = "localhost:50052"
-	certFile             = "pkg/ssl/ca.crt"
 )
-
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	creds, err := credentials.NewClientTLSFromFile(certFile, "")
-	if err != nil {
-		return nil, err
-	}
-	return creds, nil
-}
 
 func main() {
 	envErr := godotenv.Load(".env")
@@ -48,31 +36,15 @@ func main() {
 	database.Migrate()
 
 	//setup client
-	var opts []grpc.DialOption
-	creds, err := loadTLSCredentials()
-
-	if err != nil {
-		log.Fatalf("Failed to load credentials: %v", err)
-	}
-
-	opts = append(opts, grpc.WithTransportCredentials(creds))
-
-	//grpc CLient
-	conn, err := grpc.Dial(grpcClientPort, opts...)
-	if err != nil {
-		log.Fatalf("failed to connect: %v", err)
-	}
-	defer conn.Close()
-
-	adminClient := admin.NewAdminServiceClient(conn)
+	grpcClient := rpcClient.NewRPCClient()
+	adminClient := grpcClient.SetUpAdminClient()
 
 	r := router()
-	//DI Product
 	productRepo := repository.NewProductRepository(database.Instance)
 	productScv := services.NewProductService(productRepo)
 	productCtr := controllers.NewProductController(productScv)
-	adminSrvCtr := controllers2.NewAdminServiceController()
-	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr, adminClient)
+	adminSrvCtr := controllers2.NewAdminServiceController(adminClient)
+	productRoute := routes.NewProductRoute(productCtr, r, adminSrvCtr)
 	productRoute.SetRouter()
 
 	//Serve Gin Server
@@ -92,7 +64,6 @@ func main() {
 	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-	log.Println("gRPC server admin is running")
 
 }
 

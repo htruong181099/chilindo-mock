@@ -11,6 +11,7 @@ message GetProductRequest {
 }
 
 message GetProductResponse {
+  bool isFound =6;
   string Id = 1;
   string Name = 2;
   string Price = 3;
