@@ -26,11 +26,11 @@ func (b BidService) GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, err
 } //Done
 
 func (b BidService) GetBidById(dto *dtos.BidIdDTO) (*[]models.Bid, error) {
-	bid, err := b.BidRepository.GetBidById(dto)
+	bids, err := b.BidRepository.GetBidById(dto)
 	if err != nil {
 		log.Println("GetBidById: Error to get bid in package service", err)
 	}
-	return bid, nil
+	return bids, nil
 } //Done
 
 func (b BidService) CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error) {

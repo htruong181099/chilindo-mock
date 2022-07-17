@@ -2,7 +2,9 @@ package main
 
 import (
 	rpcClient "chilindo/src/auction-service/cmd/rpc-client"
+	rpc_server "chilindo/src/auction-service/cmd/rpc-server"
 	"chilindo/src/auction-service/controllers"
+	controllers2 "chilindo/src/auction-service/controllers/user-rpc"
 	"chilindo/src/auction-service/database"
 	"chilindo/src/auction-service/repository"
 	"chilindo/src/auction-service/routes"
@@ -10,12 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
+	"net"
 	"os"
 )
 
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
 	ginPort              = ":3031"
+	grpcServerPort       = ":50053"
 )
 
 func main() {
@@ -32,6 +36,7 @@ func main() {
 	database.Migrate()
 
 	//Create new gRPC Client
+
 	grpcClient := rpcClient.NewRPCClient()
 	productClient := grpcClient.SetUpProductClient()
 
@@ -42,10 +47,30 @@ func main() {
 	auctionRouter := routes.NewAuctionRoute(auctionController, r)
 	auctionRouter.SetRouter()
 
-	if err := r.Run(ginPort); err != nil {
-		log.Println("Open port is fail")
-		return
+	//DI Bid
+	authClient := grpcClient.SetUpAuthClient()
+	bidRepo := repository.NewBidRepository(database.Instance)
+	bidSrv := services.NewBidService(bidRepo)
+	bidCtr := controllers.NewBidController(bidSrv)
+	authCtr := controllers2.NewUserAuthServiceController(authClient)
+	bidRoute := routes.NewBidRoute(bidCtr, r, authCtr)
+	bidRoute.SetRouter()
+	//Server Gin run
+	go func() {
+		if err := r.Run(ginPort); err != nil {
+			log.Println("Open port is fail")
+			return
+		}
+	}()
+	//Serve Grpc run
+	lis, err := net.Listen("tcp", grpcServerPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
+	if err = rpc_server.RunGRPCServerAuction(true, lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+
 }
 
 func router() *gin.Engine {

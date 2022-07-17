@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -28,13 +29,40 @@ func NewAuctionController(auctionService services.IAuctionService, productClient
 }
 
 func (a AuctionController) GetAuctions(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	auctions, err := a.AuctionService.GetAuctions()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to create Auction",
+		})
+		log.Println("GetAuctions: Error to get Auctions in package controller", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, auctions)
 }
 
 func (a AuctionController) GetAuctionById(c *gin.Context) {
-	//TODO implement me
-	panic("implement me")
+	aucId, err := strconv.Atoi(c.Param(auctionId))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to get Auction",
+		})
+		log.Println("GetAuctionById: Error to ShouldBindJSON in package controller", err)
+		c.Abort()
+		return
+	}
+	var dto dtos.AuctionIdDTO
+	dto.AuctionId = aucId
+	auc, errGetAuc := a.AuctionService.GetAuctionById(&dto)
+	if errGetAuc != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to get Auction",
+		})
+		log.Println("GetAuctionById: Error to ShouldBindJSON in package controller", err)
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, auc)
 }
 
 func (a AuctionController) CreateAuction(c *gin.Context) {
@@ -56,7 +84,7 @@ func (a AuctionController) CreateAuction(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	fmt.Println("body", auctionBodyReq)
+	//fmt.Println("body", auctionBodyReq)
 	startingTime, errStat := time.Parse(time.RFC3339, auctionBodyReq.StartingTime)
 	if errStat != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

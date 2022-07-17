@@ -12,6 +12,7 @@ type IAuctionRoute interface {
 type AuctionRoute struct {
 	AuctionController controllers.IAuctionController
 	Router            *gin.Engine
+	//UserAuthSrvCtr    controllers2.IAdminServiceController
 }
 
 func NewAuctionRoute(auctionController controllers.IAuctionController, router *gin.Engine) *AuctionRoute {
@@ -21,7 +22,6 @@ func NewAuctionRoute(auctionController controllers.IAuctionController, router *g
 func (a AuctionRoute) SetRouter() {
 	api := a.Router.Group("/api/auction")
 	{
-		api.GET("/")
 		api.POST("/", a.AuctionController.CreateAuction)
 	}
 }
