@@ -5,7 +5,6 @@ import (
 	"chilindo/src/product-service/dtos"
 	"chilindo/src/product-service/models"
 	"chilindo/src/product-service/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -72,7 +71,7 @@ func (p ProductController) GetOptions(c *gin.Context) {
 		return
 	}
 	if options == nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"Message": "Not found options",
 		})
 		c.Abort()
@@ -118,15 +117,6 @@ func (p ProductController) GetOptionById(c *gin.Context) {
 } //done
 
 func (p ProductController) UpdateOption(c *gin.Context) {
-	var optionBody *models.Option
-	if err := c.ShouldBindJSON(&optionBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Error update option",
-		})
-		log.Println("UpdateOption: Error ShouldBindJSON ", err)
-		c.Abort()
-		return
-	}
 	oid, errCv := strconv.Atoi(c.Param(optionId))
 	if errCv != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -136,15 +126,42 @@ func (p ProductController) UpdateOption(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	optionBody.Id = oid
-	dto := dtos.NewUpdateOptionDTO(optionBody)
-
-	option, err := p.ProductService.UpdateOption(dto)
-	if err != nil {
+	optionBody, obErr := p.ProductService.GetOptionById(&dtos.OptionIdDTO{
+		OptionId: oid,
+	})
+	if obErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error update option",
 		})
-		log.Println("UpdateOption: Error call service", errCv)
+		log.Println("UpdateOption: Error get option", obErr)
+		c.Abort()
+		return
+	}
+	if optionBody == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not found",
+		})
+		c.Abort()
+		return
+	}
+
+	if err := c.ShouldBindJSON(&optionBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error update option",
+		})
+		log.Println("UpdateOption: Error ShouldBindJSON ", err)
+		c.Abort()
+		return
+	}
+
+	dto := dtos.NewUpdateOptionDTO(optionBody)
+
+	option, oErr := p.ProductService.UpdateOption(dto)
+	if oErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error update option",
+		})
+		log.Println("UpdateOption: Error call service", oErr)
 		c.Abort()
 		return
 	}
@@ -170,7 +187,7 @@ func (p ProductController) DeleteOption(c *gin.Context) {
 	}
 	var dto dtos.OptionIdDTO
 	dto.OptionId = oId
-	option, err := p.ProductService.DeleteOption(&dto)
+	_, err := p.ProductService.DeleteOption(&dto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error to delete option",
@@ -179,7 +196,9 @@ func (p ProductController) DeleteOption(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, option)
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Delete success",
+	})
 } //Done
 
 //Product Controller
@@ -191,6 +210,13 @@ func (p ProductController) CreateProduct(c *gin.Context) {
 			"Message": "Fail to create product",
 		})
 		log.Println("CreateProduct: Error to ShouldBindJSON in package controller", err)
+		c.Abort()
+		return
+	}
+	if productBody.Id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Fail to create product",
+		})
 		c.Abort()
 		return
 	}
@@ -243,9 +269,31 @@ func (p ProductController) GetProductById(c *gin.Context) {
 } //Done
 
 func (p ProductController) UpdateProduct(c *gin.Context) {
+	if c.Request.ContentLength == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Empty body",
+		})
+		c.Abort()
+		return
+	}
 	productId := c.Param(productId)
-	var productUpdateBody *models.Product
-	if err := c.ShouldBindJSON(&productUpdateBody); err != nil {
+	productBody, err := p.ProductService.GetProductById(&dtos.ProductDTO{ProductId: productId})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error to update product",
+		})
+		log.Println("UpdateProduct: Error Update in package controller", err)
+		c.Abort()
+		return
+	}
+	if productBody == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not Found",
+		})
+		c.Abort()
+		return
+	}
+	if err := c.ShouldBindJSON(&productBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error to update product",
 		})
@@ -253,7 +301,7 @@ func (p ProductController) UpdateProduct(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	dtoUpdate := dtos.NewUpdateProductDTO(productUpdateBody)
+	dtoUpdate := dtos.NewUpdateProductDTO(productBody)
 	dtoUpdate.ProductId = productId
 	product, err := p.ProductService.UpdateProduct(dtoUpdate)
 	if err != nil {
@@ -264,16 +312,21 @@ func (p ProductController) UpdateProduct(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	if product == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not Found",
+		})
+		c.Abort()
+		return
+	}
 	c.JSON(http.StatusOK, product)
 
 } //Done
 
 func (p ProductController) DeleteProduct(c *gin.Context) {
 	var dto dtos.ProductDTO
-	fmt.Println(dto.ProductId)
 	dto.ProductId = c.Param(productId)
-	fmt.Println(dto.ProductId)
-	product, err := p.ProductService.DeleteProduct(&dto)
+	_, err := p.ProductService.DeleteProduct(&dto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error to delete product",
@@ -282,7 +335,9 @@ func (p ProductController) DeleteProduct(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Delete Success",
+	})
 } //Done
 
 func NewProductController(productService services.IProductService) *ProductController {

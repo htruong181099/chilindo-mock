@@ -153,10 +153,14 @@ func (p ProductRepository) GetProducts() (*[]models.Product, error) {
 
 func (p ProductRepository) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Product, error) {
 	var updateProduct *models.Product
-	record := p.db.Where("id = ?", dto.ProductId).Find(&updateProduct)
+	var count int64
+	record := p.db.Where("id = ?", dto.ProductId).Find(&updateProduct).Count(&count)
 	if record.Error != nil {
 		log.Println("UpdateProduct: Error to find product product in package repository", record.Error)
 		return nil, record.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	updateProduct = dto.Product
 	recordSave := p.db.Save(&updateProduct)

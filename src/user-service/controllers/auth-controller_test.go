@@ -16,6 +16,7 @@ func CreateTestAuth(t *testing.T) (*services.MockIAuthService, *AuthController) 
 	ctr := gomock.NewController(t)
 	defer ctr.Finish()
 	mockSvr := services.NewMockIAuthService(ctr)
+	//adminClient := adminMock.NewMockAdminServiceClient(ctr)
 	authCtr := NewAuthController(mockSvr)
 	return mockSvr, authCtr
 }
@@ -50,7 +51,7 @@ func TestAuthController_SignUp(t *testing.T) {
 	c.Request = req
 	authCtr.SignUp(c)
 
-	if w.Code != http.StatusOK {
+	if w.Code != http.StatusCreated {
 		t.Fatalf("Expected Status is 201 but got %v", w.Code)
 	}
 } //Done
