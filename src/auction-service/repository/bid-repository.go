@@ -11,6 +11,8 @@ type IBidRepository interface {
 	GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, error) //Done
 	GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error)             //Done
 	CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error)          //Done
+	GetLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error)
+	UpdateLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error)
 }
 
 type BidRepository struct {
@@ -41,6 +43,46 @@ func (b BidRepository) GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error) {
 	}
 	return bid, nil
 } //Done
+
+func (b BidRepository) GetLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error) {
+	var bid *models.Bid
+	var count int64
+	record := b.db.Where("auction_id = ? and isLast = ?", dto.AuctionId, true).
+		Find(&bid).
+		Count(&count)
+	if record.Error != nil {
+		log.Println("GetBidById: Error to find bid", record.Error)
+		return nil, record.Error
+	}
+	if count == 0 {
+		return nil, nil
+	}
+	return bid, nil
+} //Done
+
+func (b BidRepository) UpdateLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error) {
+	var bid *models.Bid
+	var count int64
+	record := b.db.Where("auction_id = ? and is_last = ?", dto.AuctionId, true).
+		Find(&bid).
+		Count(&count)
+	if record.Error != nil {
+		log.Println("UpdateLastBid: Error to find bid", record.Error)
+		return nil, record.Error
+	}
+	if count == 0 {
+		log.Println("count bi 0")
+		return nil, nil
+	}
+
+	bid.IsLast = false
+	saveRecord := b.db.Save(&bid)
+	if saveRecord.Error != nil {
+		log.Println("UpdateLastBid: Error to save last bid", saveRecord.Error)
+		return nil, saveRecord.Error
+	}
+	return bid, nil
+}
 
 func (b BidRepository) CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error) {
 	var bid *models.Bid

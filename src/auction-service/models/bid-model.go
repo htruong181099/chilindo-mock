@@ -13,4 +13,5 @@ type Bid struct {
 	BidTime    time.Time `json:"bidTime"`
 	Amount     float32   `json:"amount"`
 	Auction    Auction   `json:"-" gorm:"foreignKey:AuctionId"`
+	IsLast     bool      `json:"isLast" gorm:"default:true"`
 }

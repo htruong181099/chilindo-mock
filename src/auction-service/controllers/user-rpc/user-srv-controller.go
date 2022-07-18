@@ -5,11 +5,13 @@ import (
 	adminPb "chilindo/pkg/pb/admin"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
 type IUserAuthServiceController interface {
 	CheckIsAuth() gin.HandlerFunc
+	CheckIsAdmin() gin.HandlerFunc
 }
 
 type UserAuthServiceController struct {
@@ -35,7 +37,6 @@ func (a UserAuthServiceController) CheckIsAuth() gin.HandlerFunc {
 		res, err := a.UserServiceClient.CheckUserAuth(c, &adminPb.CheckUserAuthRequest{
 			Token: token,
 		})
-		//fmt.Println("Check err", err)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"Error": "Error call admin service",
@@ -53,6 +54,38 @@ func (a UserAuthServiceController) CheckIsAuth() gin.HandlerFunc {
 			return
 		}
 
+		c.Next()
+	}
+}
+
+func (a UserAuthServiceController) CheckIsAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		if token == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"Error": "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
+		res, err := a.UserServiceClient.CheckIsAdmin(c, &adminPb.CheckIsAdminRequest{
+			Token: token,
+		})
+		if err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"Error": "Error call admin service",
+			})
+			c.Abort()
+			return
+		}
+		if !(res.IsAuth && res.IsAdmin) {
+			c.JSON(http.StatusForbidden, gin.H{
+				"Message": "Forbidden",
+			})
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }

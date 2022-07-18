@@ -11,7 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	"log"
+
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -46,7 +46,6 @@ func (c *adminServiceClient) CheckIsAdmin(ctx context.Context, in *CheckIsAdminR
 
 func (c *adminServiceClient) CheckUserAuth(ctx context.Context, in *CheckUserAuthRequest, opts ...grpc.CallOption) (*CheckUserAuthResponse, error) {
 	out := new(CheckUserAuthResponse)
-	log.Println("Loi ne", in)
 	err := c.cc.Invoke(ctx, "/AdminService/CheckUserAuth", in, out, opts...)
 	if err != nil {
 		return nil, err

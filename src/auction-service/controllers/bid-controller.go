@@ -41,7 +41,7 @@ func (b BidController) GetBidsOfAuction(c *gin.Context) {
 	dto.AuctionId = aid
 	bid, errGetBid := b.BidService.GetBidsOfAuction(&dto)
 	if errGetBid != nil {
-		c.JSON(http.StatusNotFound, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Not found bid of auction",
 		})
 		log.Println("GetBidsOfAuction: Error call to BidService in pkg controller", errGetBid)
@@ -52,7 +52,7 @@ func (b BidController) GetBidsOfAuction(c *gin.Context) {
 } //Done
 
 func (b BidController) GetBidById(c *gin.Context) {
-	bId, err := strconv.Atoi(c.Param(bidId))
+	bidId, err := strconv.Atoi(c.Param(bidId))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"Message": "Not found bid of bid",
@@ -62,17 +62,24 @@ func (b BidController) GetBidById(c *gin.Context) {
 		return
 	}
 	var dto dtos.BidIdDTO
-	dto.BidId = bId
-	bids, errGetListBid := b.BidService.GetBidById(&dto)
+	dto.BidId = bidId
+	bid, errGetListBid := b.BidService.GetBidById(&dto)
 	if errGetListBid != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"Message": "Not found bid of auction",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": "Error get bid",
 		})
 		log.Println("GetBidById: Error call to GetBidById in pkg controller", errGetListBid)
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, bids)
+	if bid == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not found bid of auction",
+		})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, bid)
 }
 
 func (b BidController) CreateBid(c *gin.Context) {
@@ -105,7 +112,6 @@ func (b BidController) CreateBid(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	//fmt.Println("Check bidBody", bidBody.BidderId)
 	var dto dtos.CreateBidDTO
 	dto.Bid = bidBody
 	dto.Bid.AuctionId = auctionId
@@ -120,7 +126,14 @@ func (b BidController) CreateBid(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, bid)
+	if bid == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not found auction ",
+		})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusCreated, bid)
 }
 
 func NewBidController(bidService services.IBidService) *BidController {

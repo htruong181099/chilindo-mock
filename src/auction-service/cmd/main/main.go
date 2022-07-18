@@ -39,20 +39,21 @@ func main() {
 
 	grpcClient := rpcClient.NewRPCClient()
 	productClient := grpcClient.SetUpProductClient()
+	authClient := grpcClient.SetUpAdminClient()
+
+	authCtr := controllers2.NewUserAuthServiceController(authClient)
 
 	r := router()
 	auctionRepository := repository.NewAuctionRepository(database.Instance)
 	auctionService := services.NewAuctionService(auctionRepository)
 	auctionController := controllers.NewAuctionController(auctionService, productClient)
-	auctionRouter := routes.NewAuctionRoute(auctionController, r)
+	auctionRouter := routes.NewAuctionRoute(auctionController, r, authCtr)
 	auctionRouter.SetRouter()
 
 	//DI Bid
-	authClient := grpcClient.SetUpAuthClient()
 	bidRepo := repository.NewBidRepository(database.Instance)
-	bidSrv := services.NewBidService(bidRepo)
+	bidSrv := services.NewBidService(bidRepo, auctionRepository)
 	bidCtr := controllers.NewBidController(bidSrv)
-	authCtr := controllers2.NewUserAuthServiceController(authClient)
 	bidRoute := routes.NewBidRoute(bidCtr, r, authCtr)
 	bidRoute.SetRouter()
 	//Server Gin run

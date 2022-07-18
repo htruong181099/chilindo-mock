@@ -19,7 +19,7 @@ type AuctionRepository struct {
 
 func (a AuctionRepository) GetAuctions() (*[]models.Auction, error) {
 	var auction *[]models.Auction
-	record := a.db.Create(&auction)
+	record := a.db.Find(&auction)
 	if record.Error != nil {
 		log.Println("GetAuctions: Error to get auth", record.Error)
 		return nil, record.Error
@@ -29,10 +29,14 @@ func (a AuctionRepository) GetAuctions() (*[]models.Auction, error) {
 
 func (a AuctionRepository) GetAuctionById(dto *dtos.AuctionIdDTO) (*models.Auction, error) {
 	var auction *models.Auction
-	record := a.db.Where("id = ?", dto.AuctionId).Find(&auction)
+	var count int64
+	record := a.db.Where("id = ?", dto.AuctionId).Find(&auction).Count(&count)
 	if record.Error != nil {
 		log.Println("GetAuctionById: Error to get auth", record.Error)
 		return nil, record.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	return auction, nil
 }

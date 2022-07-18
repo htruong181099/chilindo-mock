@@ -32,7 +32,7 @@ func (a AuctionController) GetAuctions(c *gin.Context) {
 	auctions, err := a.AuctionService.GetAuctions()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Fail to create Auction",
+			"Message": "Fail to get Auction",
 		})
 		log.Println("GetAuctions: Error to get Auctions in package controller", err)
 		c.Abort()
@@ -58,7 +58,14 @@ func (a AuctionController) GetAuctionById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to get Auction",
 		})
-		log.Println("GetAuctionById: Error to ShouldBindJSON in package controller", err)
+		log.Println("GetAuctionById: Error to ShouldBindJSON in package controller", errGetAuc)
+		c.Abort()
+		return
+	}
+	if auc == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Message": "Not found",
+		})
 		c.Abort()
 		return
 	}
