@@ -70,13 +70,16 @@ func (u AuthService) CheckIsAdmin(req *admin.CheckIsAdminRequest) (*admin.CheckI
 func (u AuthService) CheckUserAuth(req *admin.CheckUserAuthRequest) (*admin.CheckUserAuthResponse, error) {
 	isAuth := false
 	tokenString := req.Token
-
+	log.Println("Check here")
 	tokenResult := strings.TrimPrefix(tokenString, "Bearer ")
 
 	claims, err := jwtUtil.ExtractToken(tokenResult)
 	if err != nil {
-		log.Println("CheckIsAdmin: ", err)
-		return nil, err
+		log.Println("CheckUserAuth: ", err)
+		//return nil, err
+		return &admin.CheckUserAuthResponse{
+			IsAuth: false,
+		}, nil
 	}
 	isAuth = true
 	userId := int32(claims.Id)

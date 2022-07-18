@@ -31,7 +31,7 @@ func (R RPCClient) SetUpAdminClient() admin.AdminServiceClient {
 	opts = append(opts, grpc.WithTransportCredentials(creds))
 	conn, dialErr := grpc.Dial(adminClientPort, opts...)
 	if dialErr != nil {
-		log.Fatalf("failed to connect: %v", err)
+		log.Fatalf("failed to connect: %v", dialErr)
 	}
 
 	adminClient := admin.NewAdminServiceClient(conn)

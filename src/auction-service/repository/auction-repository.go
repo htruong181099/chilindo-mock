@@ -18,13 +18,23 @@ type AuctionRepository struct {
 }
 
 func (a AuctionRepository) GetAuctions() (*[]models.Auction, error) {
-	//TODO implement me
-	panic("implement me")
+	var auction *[]models.Auction
+	record := a.db.Create(&auction)
+	if record.Error != nil {
+		log.Println("GetAuctions: Error to get auth", record.Error)
+		return nil, record.Error
+	}
+	return auction, nil
 }
 
 func (a AuctionRepository) GetAuctionById(dto *dtos.AuctionIdDTO) (*models.Auction, error) {
-	//TODO implement me
-	panic("implement me")
+	var auction *models.Auction
+	record := a.db.Where("id = ?", dto.AuctionId).Find(&auction)
+	if record.Error != nil {
+		log.Println("GetAuctionById: Error to get auth", record.Error)
+		return nil, record.Error
+	}
+	return auction, nil
 }
 
 func (a AuctionRepository) CreateAuction(dto *dtos.CreateAuctionDTO) (*models.Auction, error) {

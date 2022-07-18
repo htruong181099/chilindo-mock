@@ -2,7 +2,9 @@ package ssl
 
 import "google.golang.org/grpc/credentials"
 
-const certFile = "./ca.crt"
+const (
+	certFile = "pkg/ssl/ca.crt"
+)
 
 func LoadTLSCredentials() (credentials.TransportCredentials, error) {
 	creds, err := credentials.NewClientTLSFromFile(certFile, "")
