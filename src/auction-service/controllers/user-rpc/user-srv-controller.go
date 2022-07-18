@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"chilindo/pkg/configs"
 	adminPb "chilindo/pkg/pb/admin"
-	"chilindo/src/config"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -43,7 +43,8 @@ func (a UserAuthServiceController) CheckIsAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set(config.UserID, res.UserId)
+		userId := int(res.UserId)
+		c.Set(configs.UserID, userId)
 		if !res.IsAuth {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"Message": "Unauthorized",

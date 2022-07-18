@@ -25,10 +25,14 @@ func NewBidRoute(bidController controllers.IBidController, router *gin.Engine, u
 }
 
 func (b BidRoute) SetRouter() {
-	api := b.Router.Group("/api/bid")
+	auctionBidAPI := b.Router.Group("/api/auction")
 	{
-		api.GET("/:bidId", b.BidController.GetBidById)
-		api.GET("/:auctionId", b.BidController.GetBidsOfAuction)
-		api.POST("/:auctionId", b.UserAuthSrvCtr.CheckIsAuth(), b.BidController.CreateBid)
+		auctionBidAPI.GET("/:auctionId/bid", b.BidController.GetBidsOfAuction)
+		auctionBidAPI.POST("/:auctionId/bid", b.UserAuthSrvCtr.CheckIsAuth(), b.BidController.CreateBid)
+	}
+
+	bidAPI := b.Router.Group("/api/bid")
+	{
+		bidAPI.GET("/:bidId", b.BidController.GetBidById)
 	}
 }

@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"chilindo/pkg/configs"
 	"chilindo/src/auction-service/dtos"
 	"chilindo/src/auction-service/models"
 	"chilindo/src/auction-service/services"
-	"chilindo/src/config"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -29,7 +29,7 @@ type BidController struct {
 }
 
 func (b BidController) GetBidsOfAuction(c *gin.Context) {
-	aid, err := strconv.Atoi(c.Param(auctionId))
+	aid, err := strconv.Atoi(c.Query(auctionId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error to get Bid by auction Id",
@@ -88,7 +88,7 @@ func (b BidController) CreateBid(c *gin.Context) {
 		return
 	}
 	timeBid := time.Now()
-	userId, ok := c.Get(config.UserID)
+	userId, ok := c.Get(configs.UserID)
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Fail to create bid ",
@@ -97,7 +97,7 @@ func (b BidController) CreateBid(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	bidId := userId.(int32)
+	bidderId := userId.(int)
 	auctionId, errCv := strconv.Atoi(c.Param(auctionId))
 	if errCv != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -107,11 +107,11 @@ func (b BidController) CreateBid(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	fmt.Println("Check bidBody", bidBody.BidderId)
+	//fmt.Println("Check bidBody", bidBody.BidderId)
 	var dto dtos.CreateBidDTO
 	dto.Bid = bidBody
 	dto.Bid.AuctionId = auctionId
-	dto.Bid.BidderId = bidId
+	dto.Bid.BidderId = bidderId
 	dto.Bid.BidTime = timeBid
 	bid, errCreateBid := b.BidService.CreateBid(&dto)
 	if errCreateBid != nil {
