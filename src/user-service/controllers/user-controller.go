@@ -197,6 +197,13 @@ func (u *UserController) GetAddressById(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	if address == nil {
+		c.JSONP(http.StatusNotFound, gin.H{
+			"Message": "Not found",
+		})
+		c.Abort()
+		return
+	}
 	c.JSONP(http.StatusOK, address)
 }
 
@@ -245,8 +252,33 @@ func (u *UserController) UpdateAddressById(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	var addressBody *models.Address
-	if err := c.ShouldBindJSON(&addressBody); err != nil {
+
+	addressId, errCv := strconv.Atoi(c.Param(addressId))
+	if errCv != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{})
+		log.Println("UpdateAddressById: Can't get addressId")
+		c.Abort()
+		return
+	}
+
+	addressBefore, aErr := u.UserService.GetAddressById(&dto.GetAddressByIdDTO{
+		AddressId: addressId,
+		UserId:    userId.(int),
+	})
+	if aErr != nil {
+		c.JSONP(http.StatusBadRequest, gin.H{})
+		log.Println("UpdateAddressById: Can't get addressId")
+		c.Abort()
+		return
+	}
+	if addressBefore == nil {
+		c.JSONP(http.StatusNotFound, gin.H{
+			"Message": "Not found",
+		})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&addressBefore); err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error update address",
 		})
@@ -255,14 +287,7 @@ func (u *UserController) UpdateAddressById(c *gin.Context) {
 		return
 	}
 
-	addressId, errCv := strconv.Atoi(c.Param(addressId))
-	if errCv != nil {
-		c.JSONP(http.StatusBadRequest, gin.H{})
-		log.Println("UpdateAddressById: Can't get addressId")
-		return
-	}
-
-	dTo := dto.NewAddressDTO(addressBody)
+	dTo := dto.NewAddressDTO(addressBefore)
 	dTo.Address.UserId = userId.(int)
 	dTo.Address.Id = addressId
 	address, err := u.UserService.UpdateAddressById(dTo)
@@ -271,6 +296,12 @@ func (u *UserController) UpdateAddressById(c *gin.Context) {
 			"Message": "Error Add address",
 		})
 		log.Println("CreateAddressByUserId: Error create new address in package controller")
+		return
+	}
+	if address == nil {
+		c.JSONP(http.StatusNotFound, gin.H{
+			"Message": "Not found",
+		})
 		return
 	}
 	c.JSONP(http.StatusOK, address)

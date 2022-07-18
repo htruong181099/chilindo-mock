@@ -21,11 +21,16 @@ func (u UserRoute) SetRouter() {
 	{
 		api.GET("/", u.UserController.GetUser)
 		api.PATCH("/password", u.UserController.ChangePassword)
-		api.GET("/address", u.UserController.GetAddress)
-		api.GET("/address/:addressId", u.UserController.GetAddressById)
-		api.POST("/address", u.UserController.CreateAddressByUserId)
-		api.DELETE("/address/:addressId", u.UserController.DeleteAddressById)
-		api.PATCH("/address/:addressId", u.UserController.UpdateAddressById)
+
+	}
+
+	addressAPI := u.Router.Group("/api/users/address").Use(u.JWTMiddleware.IsAuth())
+	{
+		addressAPI.GET("/", u.UserController.GetAddress)
+		addressAPI.GET("/:addressId", u.UserController.GetAddressById)
+		addressAPI.POST("/", u.UserController.CreateAddressByUserId)
+		addressAPI.PATCH("/:addressId", u.UserController.UpdateAddressById)
+		addressAPI.DELETE("/:addressId", u.UserController.DeleteAddressById)
 	}
 
 }

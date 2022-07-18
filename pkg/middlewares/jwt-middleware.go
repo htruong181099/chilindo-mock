@@ -33,9 +33,9 @@ func (s *JwtMiddleWare) IsAuth() gin.HandlerFunc {
 		claims, err := jwtUtil.ExtractToken(tokenResult)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"Message": "Token is expired",
+				"Message": "Invalid Token",
 			})
-			log.Println("Error: Token is expired")
+			log.Println("Error: Invalid token")
 			c.Abort()
 			return
 		}

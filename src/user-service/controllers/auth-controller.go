@@ -32,7 +32,7 @@ func (u AuthController) SignIn(c *gin.Context) {
 	}
 	userLogin, errLogin := u.AuthService.SignIn(user)
 	if errLogin != nil {
-		c.JSONP(http.StatusUnauthorized, gin.H{
+		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error SignIn",
 		})
 		log.Println("SignIn: Error in UserService.SignIn in package controller")
@@ -63,7 +63,7 @@ func (u AuthController) SignUp(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	user, err := u.AuthService.SignUp(userBody)
+	_, err := u.AuthService.SignUp(userBody)
 	if err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
@@ -72,7 +72,9 @@ func (u AuthController) SignUp(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSONP(http.StatusCreated, user)
+	c.JSONP(http.StatusCreated, gin.H{
+		"Message": "Signup successful",
+	})
 }
 
 func NewAuthController(authService services.IAuthService) *AuthController {

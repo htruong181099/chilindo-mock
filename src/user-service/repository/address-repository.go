@@ -41,23 +41,39 @@ func (a *AddressRepository) GetAddress(dto *dto.GetAddressDTO) (*[]models.Addres
 
 func (a *AddressRepository) GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error) {
 	var address *models.Address
-	result := a.db.Where("id = ? And user_id =?", dto.AddressId, dto.UserId).Find(&address)
+	var count int64
+	result := a.db.Where("id = ? And user_id =?", dto.AddressId, dto.UserId).
+		Find(&address).
+		Count(&count)
 	if result.Error != nil {
 		log.Println("GetAddress: Error Find in package repository", result.Error)
 		return nil, result.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	return address, nil
 } //Done
 
 func (a *AddressRepository) UpdateAddress(dto *dto.AddressDTO) (*models.Address, error) {
 	var addressFind *models.Address
-	err := a.db.Where("user_id = ? and id = ?", dto.Address.UserId, dto.Address.Id).Find(&addressFind)
-	if err.Error != nil {
-		log.Println("UpdateAddress: Error to Find in package repository", err)
-		return nil, err.Error
+	var count int64
+	record := a.db.Where("user_id = ? and id = ?", dto.Address.UserId, dto.Address.Id).
+		Find(&addressFind).
+		Count(&count)
+	if record.Error != nil {
+		log.Println("UpdateAddress: Error to Find in package repository", record.Error)
+		return nil, record.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	addressFind = dto.Address
-	a.db.Save(&addressFind)
+	recordSave := a.db.Save(&addressFind)
+	if recordSave.Error != nil {
+		log.Println("UpdateAddress: Error to Find in package repository", recordSave.Error)
+		return nil, recordSave.Error
+	}
 	return addressFind, nil
 } //Done
 
