@@ -29,7 +29,7 @@ type BidController struct {
 }
 
 func (b BidController) GetBidsOfAuction(c *gin.Context) {
-	aid, err := strconv.Atoi(c.Query(auctionId))
+	aid, err := strconv.Atoi(c.Param(auctionId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Message": "Error to get Bid by auction Id",
