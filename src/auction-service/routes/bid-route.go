@@ -2,6 +2,7 @@ package routes
 
 import (
 	"chilindo/src/auction-service/controllers"
+	controllers2 "chilindo/src/auction-service/controllers/user-rpc"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,14 +11,28 @@ type IBidRoute interface {
 }
 
 type BidRoute struct {
-	BidController controllers.IBidController
-	Router        *gin.Engine
+	BidController  controllers.IBidController
+	Router         *gin.Engine
+	UserAuthSrvCtr controllers2.IUserAuthServiceController
+}
+
+func NewBidRoute(bidController controllers.IBidController, router *gin.Engine, userAuthSrvCtr controllers2.IUserAuthServiceController) *BidRoute {
+	return &BidRoute{
+		BidController:  bidController,
+		Router:         router,
+		UserAuthSrvCtr: userAuthSrvCtr,
+	}
 }
 
 func (b BidRoute) SetRouter() {
-	api := b.Router.Group("/api/bid")
+	auctionBidAPI := b.Router.Group("/api/auction")
 	{
-		api.GET("/")
-		api.POST("/")
+		auctionBidAPI.GET("/:auctionId/bid", b.BidController.GetBidsOfAuction)
+		auctionBidAPI.POST("/:auctionId/bid", b.UserAuthSrvCtr.CheckIsAuth(), b.BidController.CreateBid)
+	}
+
+	bidAPI := b.Router.Group("/api/bid")
+	{
+		bidAPI.GET("/:bidId", b.BidController.GetBidById)
 	}
 }

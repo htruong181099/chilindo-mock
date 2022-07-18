@@ -66,5 +66,17 @@ func (a *AdminServer) CheckIsAdmin(ctx context.Context, in *admin.CheckIsAdminRe
 
 func (a *AdminServer) CheckUserAuth(ctx context.Context, in *admin.CheckUserAuthRequest) (*admin.CheckUserAuthResponse, error) {
 	log.Printf("Login request: %v\n", in)
-	return nil, nil
+
+	res, err := a.AuthService.CheckUserAuth(in)
+
+	if err != nil {
+		log.Println("CheckUserAuth: ", err)
+		return nil, status.Errorf(codes.Internal, "Internal error: %v", err)
+	}
+
+	if res == nil {
+		return nil, status.Errorf(codes.NotFound, "User not found")
+	}
+
+	return res, nil
 }

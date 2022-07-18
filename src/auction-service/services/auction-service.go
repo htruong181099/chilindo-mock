@@ -18,19 +18,27 @@ type AuctionService struct {
 }
 
 func (a AuctionService) GetAuctions() (*[]models.Auction, error) {
-	//TODO implement me
-	panic("implement me")
+	auctions, err := a.AuctionRepository.GetAuctions()
+	if err != nil {
+		log.Println("GetAuctions: Error to call repo", err)
+		return nil, err
+	}
+	return auctions, nil
 }
 
 func (a AuctionService) GetAuctionById(dto *dtos.AuctionIdDTO) (*models.Auction, error) {
-	//TODO implement me
-	panic("implement me")
+	auction, err := a.AuctionRepository.GetAuctionById(dto)
+	if err != nil {
+		log.Println("GetAuctionById: Error call to repository in package service", err)
+		return nil, err
+	}
+	return auction, nil
 }
 
 func (a AuctionService) CreateAuction(dto *dtos.CreateAuctionDTO) (*models.Auction, error) {
 	auth, err := a.AuctionRepository.CreateAuction(dto)
 	if err != nil {
-		log.Println("Error call to repository in package service", err)
+		log.Println("CreateAuction: Error call to repository in package service", err)
 		return nil, err
 	}
 	return auth, nil

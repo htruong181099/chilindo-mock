@@ -18,7 +18,7 @@ func Connect(connectionString string) {
 	log.Println("Connected to Database!")
 }
 func Migrate() {
-	if err := Instance.AutoMigrate(&models.Auction{}); err != nil {
+	if err := Instance.AutoMigrate(&models.Auction{}, &models.Bid{}); err != nil {
 		log.Println(err)
 		return
 	}

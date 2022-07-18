@@ -21,7 +21,8 @@ func NewAuctionRoute(auctionController controllers.IAuctionController, router *g
 func (a AuctionRoute) SetRouter() {
 	api := a.Router.Group("/api/auction")
 	{
-		api.GET("/")
+		api.GET("/", a.AuctionController.GetAuctions)
+		api.GET("/:auctionId", a.AuctionController.GetAuctionById)
 		api.POST("/", a.AuctionController.CreateAuction)
 	}
 }
