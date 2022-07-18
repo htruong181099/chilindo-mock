@@ -7,12 +7,12 @@ service AuctionService {
 }
 
 message GetAuctionRequest {
-  string AuctionId = 1;
+  int32 AuctionId = 1;
 }
 
 message GetAuctionRespond {
   int32 Id = 1;
-  int32 ProductId = 2;
+  string ProductId = 2;
   string StartingTime =3;
   string EndingTime =4;
   bool IsActive =5;

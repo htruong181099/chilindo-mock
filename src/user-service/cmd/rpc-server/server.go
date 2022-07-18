@@ -6,7 +6,6 @@ import (
 	"chilindo/src/user-service/repository"
 	"chilindo/src/user-service/services"
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -71,7 +70,7 @@ func (a *AdminServer) CheckUserAuth(ctx context.Context, in *admin.CheckUserAuth
 	res, err := a.AuthService.CheckUserAuth(in)
 
 	if err != nil {
-		fmt.Println("CheckUserAuth: ", err)
+		log.Println("CheckUserAuth: ", err)
 		return nil, status.Errorf(codes.Internal, "Internal error: %v", err)
 	}
 

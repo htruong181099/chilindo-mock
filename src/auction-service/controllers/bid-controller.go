@@ -5,7 +5,6 @@ import (
 	"chilindo/src/auction-service/dtos"
 	"chilindo/src/auction-service/models"
 	"chilindo/src/auction-service/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -40,7 +39,6 @@ func (b BidController) GetBidsOfAuction(c *gin.Context) {
 	}
 	var dto dtos.AuctionIdDTO
 	dto.AuctionId = aid
-	fmt.Println(dto)
 	bid, errGetBid := b.BidService.GetBidsOfAuction(&dto)
 	if errGetBid != nil {
 		c.JSON(http.StatusNotFound, gin.H{

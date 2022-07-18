@@ -9,7 +9,7 @@ import (
 
 type IBidRepository interface {
 	GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, error) //Done
-	GetBidById(dto *dtos.BidIdDTO) (*[]models.Bid, error)           //Done
+	GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error)             //Done
 	CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error)          //Done
 }
 
@@ -28,8 +28,8 @@ func (b BidRepository) GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, 
 	return bid, nil
 } //Done
 
-func (b BidRepository) GetBidById(dto *dtos.BidIdDTO) (*[]models.Bid, error) {
-	var bid *[]models.Bid
+func (b BidRepository) GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error) {
+	var bid *models.Bid
 	var count int64
 	record := b.db.Where("id = ?", dto.BidId).Find(&bid).Count(&count)
 	if record.Error != nil {

@@ -9,7 +9,7 @@ import (
 
 type IBidService interface {
 	GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, error)
-	GetBidById(dto *dtos.BidIdDTO) (*[]models.Bid, error)
+	GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error)
 	CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error)
 }
 
@@ -25,7 +25,7 @@ func (b BidService) GetBidsOfAuction(dto *dtos.AuctionIdDTO) (*[]models.Bid, err
 	return bid, nil
 } //Done
 
-func (b BidService) GetBidById(dto *dtos.BidIdDTO) (*[]models.Bid, error) {
+func (b BidService) GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error) {
 	bids, err := b.BidRepository.GetBidById(dto)
 	if err != nil {
 		log.Println("GetBidById: Error to get bid in package service", err)

@@ -2,9 +2,9 @@ package rpc_server
 
 import (
 	"chilindo/pkg/pb/auction"
+	"chilindo/src/auction-service/database"
 	"chilindo/src/auction-service/repository"
 	"chilindo/src/auction-service/services"
-	"chilindo/src/user-service/database"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"log"

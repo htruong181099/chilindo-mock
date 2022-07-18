@@ -21,7 +21,7 @@ type IRPCClient interface {
 
 type RPCClient struct{}
 
-func (r RPCClient) SetUpAuthClient() admin.AdminServiceClient {
+func (r RPCClient) SetUpAdminClient() admin.AdminServiceClient {
 	var opts []grpc.DialOption
 	creds, err := ssl.LoadTLSCredentials()
 	if err != nil {
