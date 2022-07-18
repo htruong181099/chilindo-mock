@@ -12,7 +12,7 @@ type IBidRepository interface {
 	GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error)             //Done
 	CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error)          //Done
 	GetLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error)
-	UpdateLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error)
+	UpdateLastBid(dto *dtos.BidIdDTO) (*models.Bid, error)
 }
 
 type BidRepository struct {
@@ -47,7 +47,7 @@ func (b BidRepository) GetBidById(dto *dtos.BidIdDTO) (*models.Bid, error) {
 func (b BidRepository) GetLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error) {
 	var bid *models.Bid
 	var count int64
-	record := b.db.Where("auction_id = ? and isLast = ?", dto.AuctionId, true).
+	record := b.db.Where("auction_id = ? and is_last = ?", dto.AuctionId, true).
 		Find(&bid).
 		Count(&count)
 	if record.Error != nil {
@@ -60,10 +60,10 @@ func (b BidRepository) GetLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error) {
 	return bid, nil
 } //Done
 
-func (b BidRepository) UpdateLastBid(dto *dtos.AuctionIdDTO) (*models.Bid, error) {
+func (b BidRepository) UpdateLastBid(dto *dtos.BidIdDTO) (*models.Bid, error) {
 	var bid *models.Bid
 	var count int64
-	record := b.db.Where("auction_id = ? and is_last = ?", dto.AuctionId, true).
+	record := b.db.Where("id = ? ", dto.BidId).
 		Find(&bid).
 		Count(&count)
 	if record.Error != nil {

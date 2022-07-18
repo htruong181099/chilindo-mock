@@ -55,18 +55,14 @@ func (b BidService) CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error) {
 		return nil, errors.New("CreateBid: Invalid amount")
 	}
 
-	lastBid, prevErr := b.BidRepository.UpdateLastBid(&dtos.AuctionIdDTO{
+	lastBid, prevErr := b.BidRepository.GetLastBid(&dtos.AuctionIdDTO{
 		AuctionId: dto.Bid.AuctionId,
 	})
 	if prevErr != nil {
 		log.Println("CreateBid: Error to get auction in package service", aErr)
 		return nil, aErr
 	}
-	log.Println("lb: ", lastBid)
 	if lastBid != nil {
-		log.Println("bid ", dto.Bid.Amount)
-		log.Println("lastbid ", lastBid.Id, lastBid.Amount)
-
 		if dto.Bid.Amount <= lastBid.Amount {
 			return nil, errors.New("CreateBid: Invalid amount")
 		}
@@ -81,5 +77,16 @@ func (b BidService) CreateBid(dto *dtos.CreateBidDTO) (*models.Bid, error) {
 		log.Println("CreateBid: Error to create bid in package service", err)
 		return nil, err
 	}
+
+	if lastBid != nil {
+		_, updErr := b.BidRepository.UpdateLastBid(&dtos.BidIdDTO{
+			BidId: lastBid.Id,
+		})
+		if updErr != nil {
+			log.Println("CreateBid: Error to update last bid", updErr)
+			return nil, updErr
+		}
+	}
+
 	return bid, nil
 } //Done
