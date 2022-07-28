@@ -128,6 +128,7 @@ func (p ProductRepository) GetProductById(dto *dtos.ProductDTO) (*models.Product
 	//log.Println("pid:", dto.ProductId)
 	log.Println("Check Db: ", p.db)
 	record := p.db.Where("id = ?", dto.ProductId).
+		Preload("Options").
 		Find(&product).
 		Count(&count)
 	if record.Error != nil {
@@ -173,7 +174,10 @@ func (p ProductRepository) UpdateProduct(dto *dtos.UpdateProductDTO) (*models.Pr
 
 func (p ProductRepository) DeleteProduct(dto *dtos.ProductDTO) (*models.Product, error) {
 	var product *models.Product
-	recordFind := p.db.Where("id = ?", dto.ProductId).Delete(&product)
+	recordFind := p.db.
+		Unscoped().
+		Where("id = ?", dto.ProductId).
+		Delete(&product)
 	if recordFind.Error != nil {
 		log.Println("DeleteProduct: Error in find product to delete in package repository", recordFind.Error)
 		return nil, recordFind.Error

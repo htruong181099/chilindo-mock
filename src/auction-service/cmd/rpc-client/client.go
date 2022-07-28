@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	productClientPort = "localhost:50052"
 	authClientPort    = "localhost:50051"
+	productClientPort = "localhost:50052"
 )
 
 type IRPCClient interface {
@@ -21,7 +21,7 @@ type IRPCClient interface {
 
 type RPCClient struct{}
 
-func (r RPCClient) SetUpAdminClient() admin.AdminServiceClient {
+func (r *RPCClient) SetUpAdminClient() admin.AdminServiceClient {
 	var opts []grpc.DialOption
 	creds, err := ssl.LoadTLSCredentials()
 	if err != nil {
@@ -38,7 +38,7 @@ func (r RPCClient) SetUpAdminClient() admin.AdminServiceClient {
 	return authClient
 }
 
-func (r RPCClient) SetUpProductClient() product.ProductServiceClient {
+func (r *RPCClient) SetUpProductClient() product.ProductServiceClient {
 	var opts []grpc.DialOption
 	creds, tlsErr := ssl.LoadTLSCredentials()
 
@@ -46,7 +46,8 @@ func (r RPCClient) SetUpProductClient() product.ProductServiceClient {
 		log.Fatalf("Failed to load credentials: %v", tlsErr)
 	}
 	opts = append(opts, grpc.WithTransportCredentials(creds))
-	conn, err := grpc.Dial(productClientPort, opts...)
+	//conn, err := grpc.Dial(productClientPort, opts...)
+	conn, err := grpc.Dial(productClientPort, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}

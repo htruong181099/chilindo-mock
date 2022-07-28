@@ -14,7 +14,3 @@ type Auction struct {
 	IsActive     bool      `json:"isActive" gorm:"default:false"`
 	LowestBid    float32   `json:"lowestBid"`
 }
-
-func NewAuction(id int, productId string, startingTime time.Time, endingTime time.Time, isActive bool, lowestBid float32) *Auction {
-	return &Auction{Id: id, ProductId: productId, StartingTime: startingTime, EndingTime: endingTime, IsActive: isActive, LowestBid: lowestBid}
-}

@@ -26,10 +26,10 @@ const (
 func main() {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
-		log.Fatalf("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
+	connectString := os.Getenv(DB_CONNECTION_STRING)
 
-	connectString := "root:@Duy123456789@tcp(localhost:3306)/chilindo?parseTime=true"
 	if envErr == nil {
 		connectString = os.Getenv(DB_CONNECTION_STRING)
 	}
@@ -37,7 +37,6 @@ func main() {
 	database.Connect(connectString)
 	database.Migrate()
 
-	//DI Auth
 	r := router()
 
 	userRepo := repository.NewUserRepository(database.Instance)
@@ -65,7 +64,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	if err = rpcServer.RunGRPCServer(true, lis); err != nil {
+	if err = rpcServer.RunGRPCServer(false, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 	log.Println("gRPC server admin is running")

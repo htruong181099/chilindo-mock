@@ -19,16 +19,16 @@ import (
 const (
 	DB_CONNECTION_STRING = "DB_CONNECTION_STRING"
 	ginPort              = ":3030"
-	grpcServerPort       = "localhost:50052"
+	grpcServerPort       = ":50052"
 )
 
 func main() {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
-		log.Fatalf("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
 
-	connectString := "root:@Duy123456789@tcp(localhost:3306)/chilindo?parseTime=true"
+	connectString := os.Getenv(DB_CONNECTION_STRING)
 	if envErr == nil {
 		connectString = os.Getenv(DB_CONNECTION_STRING)
 	}
@@ -61,7 +61,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	if err = rpc_server.RunGRPCServer(true, lis); err != nil {
+	if err = rpc_server.RunGRPCServer(false, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 

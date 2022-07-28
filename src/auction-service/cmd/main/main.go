@@ -68,7 +68,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	if err = rpc_server.RunGRPCServerAuction(true, lis); err != nil {
+	if err = rpc_server.RunGRPCServerAuction(false, lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 

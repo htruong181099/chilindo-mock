@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  user:
+    container_name: user
+    image: chilindo/user
+    build:
+      context: .
+      dockerfile: ./src/user-service/Dockerfile
+    ports:
+      - "3000:3000"
+      - "50051:50051"
+    environment:
+      - DB_CONNECTION_STRING=root:@Hoang_123456@tcp(host.docker.internal:3306)/chilindo?parseTime=true
+      - GIN_PORT=3000
+      - GRPC_SERVER_PORT=50051
+
+  product:
+      container_name: product
+      image: chilindo/product
+      build:
+        context: .
+        dockerfile: ./src/product-service/Dockerfile
+      ports:
+        - "3030:3030"
+        - "50052:50052"
+      environment:
+        - DB_CONNECTION_STRING=root:@Hoang_123456@tcp(host.docker.internal:3306)/chilindo?parseTime=true
+        - GIN_PORT=3030
+        - GRPC_SERVER_PORT=50052
+        - USER_SRV_HOST=user:50051
+
+  auction:
+    container_name: auction
+    image: chilindo/auction
+    build:
+      context: .
+      dockerfile: ./src/auction-service/Dockerfile
+    ports:
+      - "3031:3031"
+      - "50053:50053"
+    environment:
+      - DB_CONNECTION_STRING=root:@Hoang_123456@tcp(host.docker.internal:3306)/chilindo?parseTime=true
+      - GIN_PORT=3031
+      - GRPC_SERVER_PORT=50053
+      - USER_SRV_HOST=user:50051
+      - PRODUCT_SRV_HOST=product:50052
+
+  order:
+      container_name: order
+      image: chilindo/order
+      build:
+        context: .
+        dockerfile: ./src/order-service/Dockerfile
+      ports:
+        - "3032:3032"
+      environment:
+        - DB_CONNECTION_STRING=root:@Hoang_123456@tcp(host.docker.internal:3306)/chilindo?parseTime=true
+        - GIN_PORT=3032

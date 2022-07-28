@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -116,6 +117,15 @@ func TestProductController_UpdateOption(t *testing.T) {
 	testCtl := NewProductController(mockSvc)
 
 	//Mock svc
+	mockSvc.EXPECT().GetOptionById(gomock.Any()).Return(&models.Option{
+		Model:        gorm.Model{},
+		Id:           0,
+		ProductId:    "",
+		Color:        "",
+		Size:         "",
+		ProductModel: "",
+		Product:      models.Product{},
+	}, nil).Times(1)
 	mockSvc.EXPECT().UpdateOption(gomock.Any()).Return(&models.Option{
 		Model:        gorm.Model{},
 		Id:           0,
@@ -196,9 +206,9 @@ func TestProductController_CreateProduct(t *testing.T) {
 	}, nil).Times(1)
 
 	// Create Body request
-	body := []byte("{}")
+	body := `{"id": "siu"}`
 	//request
-	req, err := http.NewRequest("POST", "api/products", bytes.NewReader(body))
+	req, err := http.NewRequest("POST", "api/products", strings.NewReader(body))
 	if err != nil {
 		t.Fatal("Error")
 		return
@@ -284,6 +294,15 @@ func TestProductController_UpdateProduct(t *testing.T) {
 	productCtr := NewProductController(svr)
 
 	//Mock service
+	svr.EXPECT().GetProductById(gomock.Any()).Return(&models.Product{
+		Model:       gorm.Model{},
+		Id:          "",
+		Name:        "",
+		Price:       "",
+		Description: "",
+		Quantity:    0,
+	}, nil).Times(1)
+	//Create mock body
 	svr.EXPECT().UpdateProduct(gomock.Any()).Return(&models.Product{
 		Model:       gorm.Model{},
 		Id:          "",

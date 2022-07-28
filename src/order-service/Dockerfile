@@ -6,17 +6,17 @@ COPY go.* /
 RUN go mod download
 
 COPY pkg/ /pkg/
-COPY src/user-service/ /src/user-service/
+COPY src/order-service/ /src/order-service/
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /main /src/user-service/cmd/main/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main /src/order-service/cmd/main/main.go
 
 FROM scratch
 
 WORKDIR /
 
+COPY --from=build /pkg /pkg/
 COPY --from=build /main /main
 
-EXPOSE 3000
-EXPOSE 50051
+EXPOSE 3032
 
 ENTRYPOINT ["/main"]

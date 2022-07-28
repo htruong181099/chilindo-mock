@@ -2,14 +2,14 @@ package rpc_client
 
 import (
 	"chilindo/pkg/pb/admin"
-	"chilindo/pkg/ssl"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
+	"os"
 )
 
 const (
-	adminClientPort = "localhost:50051"
+	adminClientPort = ":50051"
 )
 
 type IRPCClient interface {
@@ -23,13 +23,16 @@ func NewRPCClient() *RPCClient {
 }
 
 func (R RPCClient) SetUpAdminClient() admin.AdminServiceClient {
-	var opts []grpc.DialOption
-	creds, err := ssl.LoadTLSCredentials()
-	if err != nil {
-		log.Fatalf("Failed to load credentials: %v", err)
-	}
-	opts = append(opts, grpc.WithTransportCredentials(creds))
-	conn, dialErr := grpc.Dial(adminClientPort, opts...)
+	//var opts []grpc.DialOption
+	//creds, err := ssl.LoadTLSCredentials()
+	//if err != nil {
+	//	log.Fatalf("Failed to load credentials: %v", err)
+	//}
+	//opts = append(opts, grpc.WithTransportCredentials(creds))
+
+	addr := os.Getenv("USER_SRV_HOST")
+
+	conn, dialErr := grpc.Dial(addr, grpc.WithInsecure())
 	if dialErr != nil {
 		log.Fatalf("failed to connect: %v", dialErr)
 	}
