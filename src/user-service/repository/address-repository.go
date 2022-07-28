@@ -1,34 +1,33 @@
 package repository
 
 import (
-	"chilindo/dto"
-	"chilindo/models"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
 	"gorm.io/gorm"
 	"log"
 )
 
 type IAddressRepository interface {
-	CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error)
+	CreateAddress(dto *dto.AddressDTO) (*models.Address, error)
 	GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, error)
 	GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error)
-	UpdateAddress(dto *dto.UpdateAddressDTO) (*models.Address, error)
-	DeleteAddressById(dto *dto.DeleteAddressByIdDTO) (*models.Address, error)
+	UpdateAddress(dto *dto.AddressDTO) (*models.Address, error)
+	DeleteAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error)
 }
 
 type AddressRepository struct {
 	db *gorm.DB
 }
 
-func (a *AddressRepository) CreateAddress(dto *dto.CreateAddressDTO) (*models.Address, error) {
-	var address *models.Address
-	address.UserId = dto.UserId
-	result := a.db.Create(&address)
+func (a *AddressRepository) CreateAddress(dto *dto.AddressDTO) (*models.Address, error) {
+
+	result := a.db.Create(&dto.Address)
 	if result.Error != nil {
 		log.Println("CreateAddress: Error Create in package repository", result)
 		return nil, result.Error
 	}
-	return address, nil
-}
+	return dto.Address, nil
+} //Done
 
 func (a *AddressRepository) GetAddress(dto *dto.GetAddressDTO) (*[]models.Address, error) {
 	var address *[]models.Address
@@ -38,31 +37,47 @@ func (a *AddressRepository) GetAddress(dto *dto.GetAddressDTO) (*[]models.Addres
 		return nil, result.Error
 	}
 	return address, nil
-}
+} //Done
 
 func (a *AddressRepository) GetAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error) {
 	var address *models.Address
-	result := a.db.Where("id = ? And user_id =?", dto.AddressId, dto.UserId).Find(&address)
+	var count int64
+	result := a.db.Where("id = ? And user_id =?", dto.AddressId, dto.UserId).
+		Find(&address).
+		Count(&count)
 	if result.Error != nil {
 		log.Println("GetAddress: Error Find in package repository", result.Error)
 		return nil, result.Error
 	}
+	if count == 0 {
+		return nil, nil
+	}
 	return address, nil
-}
+} //Done
 
-func (a *AddressRepository) UpdateAddress(dto *dto.UpdateAddressDTO) (*models.Address, error) {
+func (a *AddressRepository) UpdateAddress(dto *dto.AddressDTO) (*models.Address, error) {
 	var addressFind *models.Address
-	err := a.db.Where("user_id = ?", dto.UserId).Find(&addressFind)
-	if err.Error != nil {
-		log.Println("UpdateAddress: Error to Find in package repository", err)
-		return nil, err.Error
+	var count int64
+	record := a.db.Where("user_id = ? and id = ?", dto.Address.UserId, dto.Address.Id).
+		Find(&addressFind).
+		Count(&count)
+	if record.Error != nil {
+		log.Println("UpdateAddress: Error to Find in package repository", record.Error)
+		return nil, record.Error
+	}
+	if count == 0 {
+		return nil, nil
 	}
 	addressFind = dto.Address
-	a.db.Save(&addressFind)
+	recordSave := a.db.Save(&addressFind)
+	if recordSave.Error != nil {
+		log.Println("UpdateAddress: Error to Find in package repository", recordSave.Error)
+		return nil, recordSave.Error
+	}
 	return addressFind, nil
-}
+} //Done
 
-func (a *AddressRepository) DeleteAddressById(dto *dto.DeleteAddressByIdDTO) (*models.Address, error) {
+func (a *AddressRepository) DeleteAddressById(dto *dto.GetAddressByIdDTO) (*models.Address, error) {
 	var deleteAddress *models.Address
 	resultFind := a.db.Where("user_id = ? AND id = ?", dto.UserId, dto.AddressId).Find(&deleteAddress)
 	if resultFind.Error != nil {
@@ -75,7 +90,7 @@ func (a *AddressRepository) DeleteAddressById(dto *dto.DeleteAddressByIdDTO) (*m
 		return nil, resultDelete.Error
 	}
 	return deleteAddress, nil
-}
+} //Done
 
 func NewAddressRepository(db *gorm.DB) *AddressRepository {
 	return &AddressRepository{db: db}

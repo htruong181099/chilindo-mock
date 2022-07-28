@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	gorm.Model
+	gorm.Model  `json:"-"`
 	Id          int    `json:"id" gorm:"primaryKey"`
 	FirstName   string `json:"firstName"`
 	LastName    string `json:"lastName"`
@@ -17,7 +17,7 @@ type User struct {
 	PhoneNumber string `json:"phoneNumber"`
 	Gender      string `json:"gender"`
 	Language    string `json:"language"`
-	Role        string `json:"Role" gorm:"default:user"`
+	Role        string `json:"role" gorm:"default:user"`
 }
 
 func (u *User) HashPassword(password string) error {

@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type Address struct {
-	gorm.Model
+	gorm.Model  `json:"-"`
 	Id          int    `json:"id" gorm:"primaryKey""`
 	UserId      int    `json:"userId"`
 	FirstName   string `json:"firstName"`
@@ -14,5 +14,5 @@ type Address struct {
 	SubDistrict string `json:"subDistrict"`
 	Address     string `json:"address"`
 	TypeAddress string `json:"typeAddress"`
-	User        User   `json:"-" gorm:"references:UserId"`
+	User        User   `json:"-" gorm:"foreignKey:UserId"`
 }

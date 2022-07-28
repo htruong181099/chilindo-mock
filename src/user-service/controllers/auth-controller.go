@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"chilindo/dto"
-	"chilindo/services"
-	"chilindo/token"
-	"fmt"
+	jwtUtil "chilindo/pkg/utils"
+	"chilindo/src/user-service/dto"
+	"chilindo/src/user-service/models"
+	"chilindo/src/user-service/services"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -17,7 +17,7 @@ type IAuthController interface {
 
 type AuthController struct {
 	AuthService services.IAuthService
-	Token       *token.JWTClaim
+	Token       *jwtUtil.JWTClaim
 }
 
 func (u AuthController) SignIn(c *gin.Context) {
@@ -32,14 +32,14 @@ func (u AuthController) SignIn(c *gin.Context) {
 	}
 	userLogin, errLogin := u.AuthService.SignIn(user)
 	if errLogin != nil {
-		c.JSONP(http.StatusUnauthorized, gin.H{
+		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error SignIn",
 		})
 		log.Println("SignIn: Error in UserService.SignIn in package controller")
 		c.Abort()
 		return
 	}
-	tokenString, errToken := u.Token.GenerateJWT(userLogin.Username, userLogin.Email, userLogin.Id)
+	tokenString, errToken := u.Token.GenerateJWT(userLogin.Username, userLogin.Email, userLogin.Id, userLogin.Role)
 	if errToken != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error SignIn",
@@ -54,22 +54,27 @@ func (u AuthController) SignIn(c *gin.Context) {
 }
 
 func (u AuthController) SignUp(c *gin.Context) {
-	var userBody *dto.SignUpDTO
-	fmt.Println(c.Request.Body)
+	userBody := dto.NewSignUpDTO(&models.User{})
 	if err := c.ShouldBindJSON(&userBody.User); err != nil {
 		c.JSONP(http.StatusBadRequest, gin.H{
 			"Message": "Error to sign up",
 		})
-		log.Println("SignUp: Error ShouldBindJSON in package controller", err.Error())
+		log.Println("SignUp: Error ShouldBindJSON in package controller", err)
 		c.Abort()
 		return
 	}
-	user, err := u.AuthService.SignUp(userBody)
+	_, err := u.AuthService.SignUp(userBody)
 	if err != nil {
-		log.Println(err)
+		c.JSONP(http.StatusBadRequest, gin.H{
+			"Message": "Error to sign up",
+		})
+		log.Println("SignUp: Error call auth service", err)
+		c.Abort()
 		return
 	}
-	c.JSONP(http.StatusOK, user)
+	c.JSONP(http.StatusCreated, gin.H{
+		"Message": "Signup successful",
+	})
 }
 
 func NewAuthController(authService services.IAuthService) *AuthController {

@@ -1,10 +1,15 @@
 package dto
 
-import "chilindo/models"
+import "chilindo/src/user-service/models"
 
-type GetUserByIdDTO struct {
-	//field
-	UserId int
+type GetByUserIdDTO struct {
+	UserId int //`json:"userId"`
+}
+
+type UpdatePasswordDTO struct {
+	UserId          int    `json:"userId"`
+	CurrentPassword string `json:"currentPassword"`
+	NewPassword     string `json:"newPassword"`
 }
 
 type CreateUserDTO struct {

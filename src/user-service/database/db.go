@@ -1,7 +1,7 @@
 package database
 
 import (
-	"chilindo/models"
+	"chilindo/src/user-service/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -11,8 +11,10 @@ var Instance *gorm.DB
 var dbError error
 
 func Connect(connectionString string) {
+	log.Println(connectionString)
 	Instance, dbError = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if dbError != nil {
+		log.Println(dbError)
 		panic("Connect: Error connect to DB")
 	}
 	log.Println("Connected to Database!")
